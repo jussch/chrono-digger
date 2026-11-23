@@ -55,10 +55,15 @@ namespace Marple.Core
         public static Amount operator /(Amount a, Amount b) => new Amount(a._value / b._value);
         public static Amount operator -(Amount a) => new Amount(-a._value);
 
-        public Amount Add(Amount a, Amount b) => a + b;
-        public Amount Subtract(Amount a, Amount b) => a - b;
-        public Amount Multiply(Amount a, Amount b) => a * b;
-        public Amount Divide(Amount a, Amount b) => a / b;
+        public static Amount Add(Amount a, Amount b) => a + b;
+        public static Amount Subtract(Amount a, Amount b) => a - b;
+        public static Amount Multiply(Amount a, Amount b) => a * b;
+        public static Amount Divide(Amount a, Amount b) => a / b;
+
+        public Amount Add(Amount other) => this + other;
+        public Amount Subtract(Amount other) => this - other;
+        public Amount Multiply(Amount other) => this * other;
+        public Amount Divide(Amount other) => this / other;
 
         // ------------------------------------------------------------------
         // Comparison & equality
@@ -170,6 +175,9 @@ namespace Marple.Core
         /// </summary>
         public string Format(int significantDigits = 3, double scientificThreshold = 1e6)
         {
+            // Catches -0 too, which would otherwise print as "-0".
+            if (_value == 0d) return "0";
+
             double abs = Math.Abs(_value);
 
             if (abs < scientificThreshold)
