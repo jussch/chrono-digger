@@ -16,7 +16,7 @@ namespace Marple.Core.Tests
         public void Constants_HaveExpectedValues()
         {
             Assert.IsTrue(Amount.Zero.IsZero);
-            Assert.AreEqual(1d, Amount.One.ToDoubleLossy());
+            Assert.AreEqual(1d, Amount.One.ToDouble());
         }
 
         [Test]
@@ -24,8 +24,8 @@ namespace Marple.Core.Tests
         {
             Amount fromDouble = 2.5;
             Amount fromInt = 7;
-            Assert.AreEqual(2.5d, fromDouble.ToDoubleLossy());
-            Assert.AreEqual(7d, fromInt.ToDoubleLossy());
+            Assert.AreEqual(2.5d, fromDouble.ToDouble());
+            Assert.AreEqual(7d, fromInt.ToDouble());
         }
 
         [Test]
@@ -38,8 +38,8 @@ namespace Marple.Core.Tests
         [Test]
         public void Pow10_BuildsPowerOfTen()
         {
-            Assert.AreEqual(1000d, Amount.Pow10(3).ToDoubleLossy());
-            Assert.AreEqual(1d, Amount.Pow10(0).ToDoubleLossy());
+            Assert.AreEqual(1000d, Amount.Pow10(3).ToDouble());
+            Assert.AreEqual(1d, Amount.Pow10(0).ToDouble());
         }
 
         // ------------------------------------------------------------------
@@ -267,9 +267,9 @@ namespace Marple.Core.Tests
         [TestCase(4.0, 4.0, 4.0, 4.0)]
         public void FloorCeilingRound_Work(double value, double floor, double ceiling, double round)
         {
-            Assert.AreEqual(floor, Amount.Floor(value).ToDoubleLossy());
-            Assert.AreEqual(ceiling, Amount.Ceiling(value).ToDoubleLossy());
-            Assert.AreEqual(round, Amount.Round(value).ToDoubleLossy(), "Round should be away from zero");
+            Assert.AreEqual(floor, Amount.Floor(value).ToDouble());
+            Assert.AreEqual(ceiling, Amount.Ceiling(value).ToDouble());
+            Assert.AreEqual(round, Amount.Round(value).ToDouble(), "Round should be away from zero");
         }
 
         [Test]

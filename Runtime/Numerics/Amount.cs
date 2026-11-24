@@ -31,6 +31,7 @@ namespace Marple.Core
 
         public static readonly Amount Zero = new Amount(0d);
         public static readonly Amount One = new Amount(1d);
+        public static readonly Amount Eulers = new Amount(Math.E);
 
         /// <summary>Lets literals and ints flow in naturally: <c>Amount gold = 50;</c>, <c>cost * 1.5</c>.</summary>
         public static implicit operator Amount(double value) => new Amount(value);
@@ -54,16 +55,19 @@ namespace Marple.Core
         public static Amount operator *(Amount a, Amount b) => new Amount(a._value * b._value);
         public static Amount operator /(Amount a, Amount b) => new Amount(a._value / b._value);
         public static Amount operator -(Amount a) => new Amount(-a._value);
+        public static Amount operator %(Amount a, Amount b) => new Amount(a._value % b._value);
 
         public static Amount Add(Amount a, Amount b) => a + b;
         public static Amount Subtract(Amount a, Amount b) => a - b;
         public static Amount Multiply(Amount a, Amount b) => a * b;
         public static Amount Divide(Amount a, Amount b) => a / b;
+        public static Amount Mod(Amount a, Amount b) => a % b;
 
         public Amount Add(Amount other) => this + other;
         public Amount Subtract(Amount other) => this - other;
         public Amount Multiply(Amount other) => this * other;
         public Amount Divide(Amount other) => this / other;
+        public Amount Mod(Amount other) => this % other;
 
         // ------------------------------------------------------------------
         // Comparison & equality
@@ -108,6 +112,7 @@ namespace Marple.Core
         public bool IsZero => _value == 0d;
         public bool IsPositive => _value > 0d;
         public bool IsNegative => _value < 0d;
+        public bool IsNaN => double.IsNaN(_value);
 
         /// <summary>-1, 0 or 1.</summary>
         public int Sign => Math.Sign(_value);
@@ -131,14 +136,40 @@ namespace Marple.Core
         public static Amount Ceiling(Amount a) => new Amount(Math.Ceiling(a._value));
         public static Amount Round(Amount a) => new Amount(Math.Round(a._value, MidpointRounding.AwayFromZero));
 
-        public static Amount Pow(Amount value, double exponent) => new Amount(Math.Pow(value._value, exponent));
+        public static Amount Pow(Amount value, Amount exponent) => new Amount(Math.Pow(value._value, exponent._value));
         public static Amount Sqrt(Amount a) => new Amount(Math.Sqrt(a._value));
+
+        public static Amount Invert(Amount a) => Pow(a, -1);
+
+        public static Amount AsPercent(Amount a) => a / 100;
 
         // Logs return double on purpose: the log of even an enormous number is small,
         // and BigDouble's logs return double too, so these stay stable through a port.
         public static double Log10(Amount a) => Math.Log10(a._value);
         public static double Ln(Amount a) => Math.Log(a._value);
         public static double Log(Amount a, double newBase) => Math.Log(a._value, newBase);
+        public static double Log(Amount a, Amount newBase) => Math.Log(a._value, newBase._value);
+
+        public Amount Abs() => Abs(this);
+        public Amount Min(Amount other) => Min(this, other);
+        public Amount Max(Amount other) => Max(this, other);
+        public Amount Clamp(Amount min, Amount max) => Clamp(this, min, max);
+
+        public Amount Floor() => Floor(this);
+        public Amount Ceiling() => Ceiling(this);
+        public Amount Round() => Round(this);
+
+        public Amount Pow(Amount exponent) => Pow(this, exponent);
+        public Amount Sqrt() => Sqrt(this);
+
+        public Amount Invert() => Invert(this);
+
+        public Amount AsPercent() => AsPercent(this);
+
+        public double Log10() => Log10(this);
+        public double Ln() => Ln(this);
+        public double Log(double newBase) => Log(this, newBase);
+        public double Log(Amount newBase) => Log(this, newBase);
 
         // ------------------------------------------------------------------
         // Leaving Amount (the narrow, deliberate exits)
@@ -148,26 +179,31 @@ namespace Marple.Core
         /// Floors to an int, clamped to int range. For bridging into systems that
         /// genuinely count things (e.g. "how many purchases can I afford").
         /// </summary>
-        public int FloorToIntClamped()
-        {
+        public int ToInt() => (int)Math.Floor(_value);
+        public int FloorToIntClamped() {
             double floored = Math.Floor(_value);
             if (floored >= int.MaxValue) return int.MaxValue;
             if (floored <= int.MinValue) return int.MinValue;
             return (int)floored;
         }
+        
+        public float ToFloat() => (float)_value;
 
         /// <summary>
         /// Raw double. Only for values known to be small, like a progress-bar ratio
         /// (current / target). The awkward name is deliberate: every call site is a
         /// place a BigDouble port would have to check.
         /// </summary>
-        public double ToDoubleLossy() => _value;
+        public double ToDouble() => _value;
 
         // ------------------------------------------------------------------
         // Display
         // ------------------------------------------------------------------
 
         public override string ToString() => Format();
+
+        /// <summary>Standard .NET numeric format string (e.g. "F1", "G3"), invariant culture.</summary>
+        public string ToString(string format) => _value.ToString(format, Culture);
 
         /// <summary>
         /// Player-facing text. Below the threshold: "12", "3.5", "45,210".
@@ -198,6 +234,11 @@ namespace Marple.Core
             }
 
             return mantissa.ToString("F" + decimals, Culture) + "e" + exponent.ToString(Culture);
+        }
+
+        // Todo: Fill out later.
+        public string Beautify() {
+            return Format();
         }
 
         // ------------------------------------------------------------------
