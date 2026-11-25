@@ -7,7 +7,7 @@ namespace ChronoDigger.Combat.Stats {
     /// Shared asset data: runtime code reads it and never changes it.
     /// </summary>
     [Serializable]
-    public class StatDerivation {
+    public class StatModifier {
         public StatDefinition target;
         public AmountModifier perPoint;
     }

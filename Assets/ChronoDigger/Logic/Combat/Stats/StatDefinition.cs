@@ -14,12 +14,12 @@ namespace ChronoDigger.Combat.Stats {
         public StatCategory category;
 
         // Odin: [ValidateInput(nameof(HasNoCycle), "Derivations form a cycle")]
-        public List<StatDerivation> derivations = new List<StatDerivation>();
+        public List<StatModifier> derivations = new List<StatModifier>();
 
         public string DisplayName => displayName;
         public string Description => description;
 
-        // private bool HasNoCycle(List<StatDerivation> _) => StatDerivationValidator.FindCycle(this) == null;
+        // private bool HasNoCycle(List<StatModifier> _) => StatDerivationValidator.FindCycle(this) == null;
 
         public override string ToString() => displayName;
     }

@@ -48,7 +48,7 @@ public class StatDefinition : ScriptableObject
     public string displayName;
     public double defaultValue;          // match ModifiableAmount's numeric type
     public StatCategory category;        // for UI / inspector grouping only
-    public List<StatDerivation> derivations; // stats this one feeds
+    public List<StatModifier> derivations; // stats this one feeds
 }
 
 public enum StatCategory { Combat, Class, Resistance, Misc }
@@ -56,13 +56,13 @@ public enum StatCategory { Combat, Class, Resistance, Misc }
 
 `StatCategory` is a short, stable enum used only for grouping. Logic must never branch on it.
 
-### `StatDerivation` (serializable class)
+### `StatModifier` (serializable class)
 
 A rule saying "for each point of this stat, apply `perPoint` to `target`."
 
 ```csharp
 [Serializable]
-public class StatDerivation
+public class StatModifier
 {
     public StatDefinition target;
     public AmountModifier perPoint; // e.g. +5 flat MaxMana per Wizardry, or +2%
@@ -179,12 +179,12 @@ public class StatBlock
 - `StatChanged` fires whenever a stat's final value changes. Consumers (UI, runtime Health/Mana clamping) subscribe to it.
 
 **Derived stats (push-based):**
-- Keep one live modifier per derivation per StatBlock: `Dictionary<StatDerivation, AmountModifier> _derived`.
+- Keep one live modifier per derivation per StatBlock: `Dictionary<StatModifier, AmountModifier> _derived`.
 - When a source stat changes:
-  1. For each `StatDerivation` on the source's definition, compute `perPoint.MultiplyScalar(newValue)`.
+  1. For each `StatModifier` on the source's definition, compute `perPoint.MultiplyScalar(newValue)`.
   2. Replace that derivation's live modifier on the target's `ModifiableAmount` (remove the old one, add the new one, since `MultiplyScalar` returns a new instance). If `AmountModifier` has a clean way to update its value in place, prefer that.
   3. The target's own change then fires and propagates naturally, so chains (A → B → C) work without extra code.
-- **Never mutate** `StatDerivation.perPoint`. It is shared asset data.
+- **Never mutate** `StatModifier.perPoint`. It is shared asset data.
 - Tag derived modifiers with their source stat if `AmountModifier` supports a source or tag field, so debug views can show where a value came from.
 
 **Change events:** if `ModifiableAmount` already raises an event when its value changes, subscribe to it. If it doesn't, **stop and ask** before modifying MarpleCore, and propose the smallest change (a single `event Action Changed` is probably enough).

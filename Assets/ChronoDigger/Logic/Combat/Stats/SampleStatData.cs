@@ -24,8 +24,8 @@ namespace ChronoDigger.Combat.Stats {
 
         public static readonly StatDefinition Wizardry = new StatDefinition {
             displayName = "Wizardry", defaultValue = 0, category = StatCategory.Class,
-            derivations = new List<StatDerivation> {
-                new StatDerivation { target = MaxMana, perPoint = AmountModifier.Raw(ManaPerWizardry) },
+            derivations = new List<StatModifier> {
+                new StatModifier { target = MaxMana, perPoint = AmountModifier.Raw(ManaPerWizardry) },
             },
         };
 
