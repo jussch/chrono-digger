@@ -1,0 +1,10 @@
+{
+  "name": "ChronoDigger.Logic.Tests",
+  "rootNamespace": "ChronoDigger.Tests",
+  "references": ["ChronoDigger.Logic", "Marple.Core", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
+  "includePlatforms": ["Editor"],
+  "overrideReferences": true,
+  "precompiledReferences": ["nunit.framework.dll"],
+  "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+  "autoReferenced": false
+}

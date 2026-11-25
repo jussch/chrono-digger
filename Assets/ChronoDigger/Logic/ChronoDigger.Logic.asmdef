@@ -1,0 +1,6 @@
+{
+  "name": "ChronoDigger.Logic",
+  "rootNamespace": "ChronoDigger",
+  "references": ["Marple.Core"],
+  "noEngineReferences": true
+}

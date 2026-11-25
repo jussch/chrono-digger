@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Logic/">
+    <Project Path="Logic/ChronoDigger.Logic.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/ChronoDigger.Logic.Tests.csproj" />
+  </Folder>
+  <Project Path="../Packages/com.marple.core/Dotnet~/Core/Marple.Core.csproj" />
+  <Project Path="../Packages/com.marple.core/Dotnet~/Tests/Marple.Core.Tests.csproj" />
+</Solution>
