@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using ChronoDigger.Combat.Actors;
 using ChronoDigger.Combat.Stats;
 using Marple.Core;
 
 namespace ChronoDigger.Tests.Stats {
     /// <summary>
-    /// The one place tests construct their own definitions and profiles.
+    /// The one place tests construct their own definitions, profiles and status effect definitions.
     /// In Unity this becomes ScriptableObject.CreateInstance.
     /// </summary>
     internal static class TestStats {
@@ -22,6 +23,13 @@ namespace ChronoDigger.Tests.Stats {
             foreach (var (stat, value) in overrides)
                 profile.overrides.Add(new StatEntry { stat = stat, baseValue = value });
             return profile;
+        }
+
+        public static StatusEffectDefinition StatusEffect(params (StatDefinition stat, AmountModifier modifier)[] modifiers) {
+            var definition = new StatusEffectDefinition { statModifiers = new List<StatModifier>() };
+            foreach (var (stat, modifier) in modifiers)
+                definition.statModifiers.Add(new StatModifier { stat = stat, modifier = modifier });
+            return definition;
         }
     }
 }

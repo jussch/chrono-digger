@@ -529,7 +529,7 @@ namespace Marple.Core {
             return value >= 100 ? value : Utils.RoundToTwoSigs(value);
         }
 
-        public static int SnapFloorToInt(Amount value) => value.Add(0.001f).FloorToIntClamped();
+        public static int SnapFloorToInt(Amount value) => value.ToInt();
 
         public static bool Approx(double val1, double val2) {
             return Math.Abs(val1 - val2) < 0.00001;

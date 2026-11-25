@@ -1,3 +1,4 @@
+using System;
 using ChronoDigger.Combat.Stats;
 
 namespace ChronoDigger.Combat.Actors {
@@ -22,19 +23,19 @@ namespace ChronoDigger.Combat.Actors {
          * Control
          **/
         public void GainHealth(int health) {
-            state.health = Math.Min(state.health + health, statBlock.Get(Stat.MaxHealth));
+            state.health = Math.Min(state.health + health, statBlock.Get(Stat.MaxHealth).ToInt());
         }
 
         public void LoseHealth(int healthLoss) {
-            state.health = Math.Min(state.health - healthLoss, 0);
+            state.health = Math.Max(state.health - healthLoss, 0);
         }
 
         public void GainMana(int mana) {
-            state.mana = Math.Min(state.mana + mana, statBlock.Get(Stat.MaxMana));
+            state.mana = Math.Min(state.mana + mana, statBlock.Get(Stat.MaxMana).ToInt());
         }
 
         public void LoseMana(int manaLoss) {
-            state.mana = Math.Min(state.mana - manaLoss, 0);
+            state.mana = Math.Max(state.mana - manaLoss, 0);
         }
 
         /**
@@ -42,15 +43,15 @@ namespace ChronoDigger.Combat.Actors {
          */
         public void IncrementActorState(int time) {
             state.healthRegenCycle -= time;
-            if (stat.healthRegenCycle <= 0) {
-                GainHealth(statBlock.Get(Stat.HealthRegen));
-                stat.healthRegenCycle += statBlock.Get(Stat.HealthRegenTime);
+            if (state.healthRegenCycle <= 0) {
+                GainHealth(statBlock.Get(Stat.HealthRegen).ToInt());
+                state.healthRegenCycle += statBlock.Get(Stat.HealthRegenTime).ToInt();
             }
 
             state.manaRegenCycle -= time;
-            if (stat.manaRegenCycle <= 0) {
-                GainMana(statBlock.Get(Stat.ManaRegen));
-                stat.manaRegenCycle += statBlock.Get(Stat.ManaRegenTime);
+            if (state.manaRegenCycle <= 0) {
+                GainMana(statBlock.Get(Stat.ManaRegen).ToInt());
+                state.manaRegenCycle += statBlock.Get(Stat.ManaRegenTime).ToInt();
             }
         }
 
@@ -58,8 +59,15 @@ namespace ChronoDigger.Combat.Actors {
          * Status Effects
          **/
         public void AddStatusEffect(StatusEffect statusEffect) {
-            state.statusEffects.Add(statusEffect);
-            statusEffect.ApplyToStatBlock(statBlock);
+            var existing = state.statusEffects.Find(se => se.definition == statusEffect.definition);
+            if (existing != null) {
+                existing.AddStacks(statusEffect.stacks);
+                existing.Reload();
+                existing.ApplyToStatBlock(statBlock);
+            } else {
+                state.statusEffects.Add(statusEffect);
+                statusEffect.ApplyToStatBlock(statBlock);
+            }
         }
 
         public void RemoveStatusEffect(StatusEffect statusEffect) {
@@ -69,7 +77,7 @@ namespace ChronoDigger.Combat.Actors {
 
         public void IncrementStatusEffects(int time) {
             for (int i = state.statusEffects.Count - 1; i >= 0; i--) {
-                var statusEffect = stat.statusEffects[i];
+                var statusEffect = state.statusEffects[i];
                 statusEffect.Increment(time);
                 if (statusEffect.IsExpired()) RemoveStatusEffect(statusEffect);
             }
