@@ -5,13 +5,11 @@ using System.Globalization;
 namespace Marple.Core
 {
     /// <summary>
-    /// A number for the incremental economy: costs, rates, stockpiles.
+    /// A general-purpose game number: costs, rates, stockpiles, combat stats.
     ///
     /// Currently backed by a double (max ~1.8e308). The backing value is private and
     /// nothing outside this struct may touch it, so Amount can later be backed by
     /// BigDouble by changing only this file.
-    ///
-    /// Not for combat. Combat uses plain ints/doubles and rounds once at the end.
     /// </summary>
     public readonly struct Amount : IEquatable<Amount>, IComparable<Amount>, IComparable
     {

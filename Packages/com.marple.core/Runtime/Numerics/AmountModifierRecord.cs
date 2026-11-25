@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Marple.Core {
     [Serializable]
-    public class AmountModifierRecord, IPassiveObservable {
+    public class AmountModifierRecord : IPassiveObservable {
         /// <summary>
         /// What a record stores per key: the modifier plus optional display info.
         /// A bare <see cref="AmountModifier"/> converts to an Entry implicitly, and display
