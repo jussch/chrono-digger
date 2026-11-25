@@ -55,6 +55,7 @@ namespace ChronoDigger.Tests.Stats
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
 
             var block = new StatBlock(TestStats.Profile((wizardry, 3)));
+            block.Calculate();
 
             Assert.AreEqual((Amount)35, block.Get(maxMana));
         }
@@ -66,9 +67,11 @@ namespace ChronoDigger.Tests.Stats
             var maxMana = TestStats.Create("Max Mana", 20);
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
             var block = new StatBlock(TestStats.Profile((wizardry, 3)));
+            block.Calculate();
             Amount before = block.Get(maxMana);
 
             block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(1));
+            block.Calculate();
 
             Assert.AreEqual(before + 5, block.Get(maxMana));
         }
@@ -82,8 +85,9 @@ namespace ChronoDigger.Tests.Stats
             var block = new StatBlock(TestStats.Profile((wizardry, 3)));
 
             block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(1));
-            block.Get(maxMana);
+            block.Calculate();
             block.GetAmount(wizardry).Remove(buff);
+            block.Calculate();
 
             Assert.AreEqual((Amount)35, block.Get(maxMana));
         }
@@ -97,15 +101,16 @@ namespace ChronoDigger.Tests.Stats
             TestStats.Derive(a, b, AmountModifier.Raw(2));
             TestStats.Derive(b, c, AmountModifier.Raw(10));
             var block = new StatBlock(TestStats.Profile((a, 1)));
+            block.Calculate();
 
             Assert.AreEqual((Amount)2, block.Get(b));
             Assert.AreEqual((Amount)20, block.Get(c));
 
             block.GetAmount(a).Add(buff, AmountModifier.Raw(1));
+            block.Calculate();
 
-            // Read the end of the chain first: it must refresh B on the way.
-            Assert.AreEqual((Amount)40, block.Get(c));
             Assert.AreEqual((Amount)4, block.Get(b));
+            Assert.AreEqual((Amount)40, block.Get(c));
         }
 
         [Test]
@@ -120,7 +125,7 @@ namespace ChronoDigger.Tests.Stats
             for (int i = 0; i < 100; i++)
             {
                 block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(i));
-                block.Get(maxMana);
+                block.Calculate();
             }
 
             Assert.AreEqual(original, derivation.perPoint);
@@ -135,26 +140,11 @@ namespace ChronoDigger.Tests.Stats
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
             var strong = new StatBlock(TestStats.Profile((wizardry, 10)));
             var weak = new StatBlock(TestStats.Profile((wizardry, 1)));
+            strong.Calculate();
+            weak.Calculate();
 
             Assert.AreEqual((Amount)50, strong.Get(maxMana));
             Assert.AreEqual((Amount)5, weak.Get(maxMana));
-        }
-
-        [Test]
-        public void Observe_SeesChangeArrivingThroughDerivation()
-        {
-            var wizardry = TestStats.Create("Wizardry");
-            var maxMana = TestStats.Create("Max Mana");
-            TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
-            var block = new StatBlock(TestStats.Profile((wizardry, 3)));
-            var cache = new ObservingCache(block.Observe(maxMana));
-
-            Assert.IsFalse(cache.IsUpdated());
-
-            block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(1));
-
-            Assert.IsTrue(cache.IsUpdated());
-            Assert.IsFalse(cache.IsUpdated());
         }
 
         [Test]
@@ -171,7 +161,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Get_DerivationCycle_ThrowsInsteadOfRecursingForever()
+        public void Calculate_DerivationCycle_Terminates()
         {
             var a = TestStats.Create("A");
             var b = TestStats.Create("B");
@@ -179,7 +169,7 @@ namespace ChronoDigger.Tests.Stats
             TestStats.Derive(b, a, AmountModifier.Raw(1));
             var block = new StatBlock(TestStats.Profile((a, 1)));
 
-            Assert.Throws<InvalidOperationException>(() => block.Get(a));
+            Assert.DoesNotThrow(() => block.Calculate());
         }
     }
 }

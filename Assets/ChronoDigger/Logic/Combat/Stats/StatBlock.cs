@@ -4,34 +4,12 @@ using Marple.Core;
 
 namespace ChronoDigger.Combat.Stats {
     /// <summary>
-    /// The live stats of one actor, built from a <see cref="StatProfile"/>. Stores a
-    /// <see cref="ModifiableAmount"/> only for stats that need one (profile overrides, stats
-    /// someone modified or observed, and derivation targets); every other stat reads as its default.
-    ///
-    /// Derived stats are pull-based: reading a stat first brings its derivation sources up to
-    /// date (recursively, so chains work), re-applying a derivation only if its source changed.
-    /// Read values through <see cref="Get"/> or <see cref="Observe"/>, not the ModifiableAmount
-    /// directly, so derivations are refreshed first.
+    /// The live stats of one actor: each <see cref="StatDefinition"/> it uses, paired with a
+    /// <see cref="ModifiableAmount"/>. Built from a <see cref="StatProfile"/>; any stat without
+    /// an entry reads as its default. Derived stats are only updated by <see cref="Calculate"/>.
     /// </summary>
     public class StatBlock {
-        const int MaxDerivationDepth = 32;
-
-        // A derivation together with the stat that owns it.
-        readonly struct Feed {
-            public readonly StatDefinition Source;
-            public readonly StatDerivation Derivation;
-
-            public Feed(StatDefinition source, StatDerivation derivation) {
-                Source = source;
-                Derivation = derivation;
-            }
-        }
-
-        readonly Dictionary<StatDefinition, double> _overrides = new Dictionary<StatDefinition, double>();
         readonly Dictionary<StatDefinition, ModifiableAmount> _amounts = new Dictionary<StatDefinition, ModifiableAmount>();
-        readonly Dictionary<StatDefinition, List<Feed>> _feedsByTarget = new Dictionary<StatDefinition, List<Feed>>();
-        readonly Dictionary<StatDerivation, int> _appliedAtSourceId = new Dictionary<StatDerivation, int>();
-        readonly Dictionary<StatDefinition, StatObserver> _observers = new Dictionary<StatDefinition, StatObserver>();
 
         /// <exception cref="ArgumentException">The profile lists a null stat or the same stat twice.</exception>
         public StatBlock(StatProfile profile) {
@@ -41,106 +19,48 @@ namespace ChronoDigger.Combat.Stats {
                 if (entry?.stat == null) {
                     throw new ArgumentException($"Profile '{profile}' has an override with no stat.", nameof(profile));
                 }
-                if (_overrides.ContainsKey(entry.stat)) {
+                if (_amounts.ContainsKey(entry.stat)) {
                     throw new ArgumentException($"Profile '{profile}' overrides '{entry.stat}' more than once.", nameof(profile));
                 }
-                _overrides.Add(entry.stat, entry.baseValue);
+                _amounts.Add(entry.stat, new ModifiableAmount(entry.baseValue));
             }
-
-            foreach (var stat in _overrides.Keys) GetOrCreateAmount(stat);
         }
 
-        /// <summary>The stat's final value, with all modifiers and derivations applied.</summary>
+        /// <summary>The stat's current value, or its default if this block has no entry for it.</summary>
         public Amount Get(StatDefinition stat) {
-            if (!_amounts.TryGetValue(stat, out var amount)) return GetBaseValue(stat);
-            Refresh(stat, 0);
-            return amount.GetValue();
+            return _amounts.TryGetValue(stat, out var amount) ? amount.GetValue() : (Amount)stat.defaultValue;
         }
 
-        /// <summary>The stat's ModifiableAmount, for adding and removing equipment or buff modifiers.</summary>
+        /// <summary>The stat's ModifiableAmount, created from the default on first use.</summary>
         public ModifiableAmount GetAmount(StatDefinition stat) {
-            var amount = GetOrCreateAmount(stat);
-            Refresh(stat, 0);
-            return amount;
-        }
-
-        /// <summary>Changes whenever the stat's final value may have changed, including through derivations.</summary>
-        public IPassiveObservable Observe(StatDefinition stat) {
-            if (!_observers.TryGetValue(stat, out var observer)) {
-                GetOrCreateAmount(stat);
-                observer = new StatObserver(this, stat);
-                _observers.Add(stat, observer);
-            }
-            return observer;
-        }
-
-        double GetBaseValue(StatDefinition stat) {
-            return _overrides.TryGetValue(stat, out double value) ? value : stat.defaultValue;
-        }
-
-        ModifiableAmount GetOrCreateAmount(StatDefinition stat) {
             if (stat == null) throw new ArgumentNullException(nameof(stat));
-            if (_amounts.TryGetValue(stat, out var amount)) return amount;
-
-            amount = new ModifiableAmount(GetBaseValue(stat));
-            // Stored before following derivations so a cycle finds it instead of recursing here.
-            _amounts.Add(stat, amount);
-
-            if (stat.derivations != null) {
-                foreach (var derivation in stat.derivations) {
-                    if (derivation?.target == null) {
-                        throw new InvalidOperationException($"Stat '{stat}' has a derivation with no target.");
-                    }
-                    GetOrCreateAmount(derivation.target);
-                    if (!_feedsByTarget.TryGetValue(derivation.target, out var feeds)) {
-                        feeds = new List<Feed>();
-                        _feedsByTarget.Add(derivation.target, feeds);
-                    }
-                    feeds.Add(new Feed(stat, derivation));
-                }
+            if (!_amounts.TryGetValue(stat, out var amount)) {
+                amount = new ModifiableAmount(stat.defaultValue);
+                _amounts.Add(stat, amount);
             }
             return amount;
         }
 
-        // Re-applies every derivation feeding the target whose source changed since it was last applied.
-        void Refresh(StatDefinition target, int depth) {
-            if (!_feedsByTarget.TryGetValue(target, out var feeds)) return;
-            if (depth > MaxDerivationDepth) {
-                throw new InvalidOperationException(
-                    $"Stat derivations nest deeper than {MaxDerivationDepth} at '{target}'; they probably form a cycle. " +
-                    "Use StatDerivationValidator.FindCycle to find it.");
-            }
+        /// <summary>
+        /// Applies every derivation of every stored stat to its target, replacing what the last
+        /// call applied. A single pass: chains settle when each source is processed before its
+        /// target, which holds for targets first created here.
+        /// </summary>
+        public void Calculate() {
+            var stats = new List<StatDefinition>(_amounts.Keys);
+            for (int i = 0; i < stats.Count; i++) {
+                var source = stats[i];
+                if (source.derivations == null) continue;
 
-            foreach (var feed in feeds) {
-                Refresh(feed.Source, depth + 1);
+                Amount sourceValue = _amounts[source].GetValue();
+                foreach (var derivation in source.derivations) {
+                    if (!_amounts.ContainsKey(derivation.target)) stats.Add(derivation.target);
 
-                var source = _amounts[feed.Source];
-                Amount sourceValue = source.GetValue(); // settle the value first: calculating can bump the id
-                int sourceId = source.GetObservableId();
-                if (_appliedAtSourceId.TryGetValue(feed.Derivation, out int appliedId) && appliedId == sourceId) continue;
-
-                // MultiplyScalar returns a new modifier, so the shared perPoint is never changed.
-                // Same key every time, so this replaces the previous value instead of stacking.
-                var modifier = feed.Derivation.perPoint.MultiplyScalar(sourceValue);
-                _amounts[target].Add(feed.Derivation, modifier.With(feed.Source));
-                _appliedAtSourceId[feed.Derivation] = sourceId;
-            }
-        }
-
-        sealed class StatObserver : IPassiveObservable {
-            readonly StatBlock _block;
-            readonly StatDefinition _stat;
-
-            public StatObserver(StatBlock block, StatDefinition stat) {
-                _block = block;
-                _stat = stat;
-            }
-
-            public int GetObservableId() {
-                _block.Refresh(_stat, 0);
-                var amount = _block._amounts[_stat];
-                amount.GetValue();
-                return amount.GetObservableId();
+                    // MultiplyScalar returns a new modifier, so the shared perPoint is never changed.
+                    // Keyed by the derivation, so each call replaces the previous value.
+                    var modifier = derivation.perPoint.MultiplyScalar(sourceValue);
+                    GetAmount(derivation.target).Add(derivation, modifier.With(source));
+                }
             }
         }
     }

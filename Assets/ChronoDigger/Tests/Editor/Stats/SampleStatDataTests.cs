@@ -13,6 +13,7 @@ namespace ChronoDigger.Tests.Stats
         public void GoblinShaman_GetsManaFromWizardry()
         {
             var block = new StatBlock(SampleStatData.GoblinShaman);
+            block.Calculate();
 
             Amount expected = SampleStatData.MaxMana.defaultValue + 3 * SampleStatData.ManaPerWizardry;
             Assert.AreEqual(expected, block.Get(Stat.MaxMana));
