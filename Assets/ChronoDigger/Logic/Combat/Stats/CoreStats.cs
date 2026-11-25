@@ -18,7 +18,7 @@ namespace ChronoDigger.Combat.Stats {
             }
         }
 
-        /// <summary>Lets tests swap in their own instance. Pass null to go back to the default.</summary>
+        /// <summary>Pass null to go back to the default.</summary>
         public static void SetInstance(CoreStats instance) => _instance = instance;
 
         // Temporary, Unity-free. Replaced by the Resources asset once this moves into Unity.

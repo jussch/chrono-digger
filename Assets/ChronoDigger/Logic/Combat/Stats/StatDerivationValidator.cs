@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 
 namespace ChronoDigger.Combat.Stats {
-    /// <summary>Checks the derivation graph for cycles (A feeds B feeds A), which would recurse forever.</summary>
     public static class StatDerivationValidator {
         /// <summary>
         /// Walks every derivation reachable from <paramref name="start"/>. Returns the first cycle

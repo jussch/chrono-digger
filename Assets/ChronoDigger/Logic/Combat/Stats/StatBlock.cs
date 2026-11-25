@@ -4,9 +4,8 @@ using Marple.Core;
 
 namespace ChronoDigger.Combat.Stats {
     /// <summary>
-    /// The live stats of one actor: each <see cref="StatDefinition"/> it uses, paired with a
-    /// <see cref="ModifiableAmount"/>. Built from a <see cref="StatProfile"/>; any stat without
-    /// an entry reads as its default. Derived stats are only updated by <see cref="Calculate"/>.
+    /// A stat with no entry reads as its default; <see cref="GetAmount"/> creates the entry.
+    /// Derived stats only update when <see cref="Calculate"/> is called.
     /// </summary>
     public class StatBlock {
         readonly Dictionary<StatDefinition, ModifiableAmount> _amounts = new Dictionary<StatDefinition, ModifiableAmount>();
@@ -26,12 +25,10 @@ namespace ChronoDigger.Combat.Stats {
             }
         }
 
-        /// <summary>The stat's current value, or its default if this block has no entry for it.</summary>
         public Amount Get(StatDefinition stat) {
             return _amounts.TryGetValue(stat, out var amount) ? amount.GetValue() : (Amount)stat.defaultValue;
         }
 
-        /// <summary>The stat's ModifiableAmount, created from the default on first use.</summary>
         public ModifiableAmount GetAmount(StatDefinition stat) {
             if (stat == null) throw new ArgumentNullException(nameof(stat));
             if (!_amounts.TryGetValue(stat, out var amount)) {

@@ -1,5 +1,4 @@
 namespace ChronoDigger.Combat.Stats {
-    /// <summary>Short names for the stats engine code refers to directly: <c>Stat.MaxHealth</c>.</summary>
     public static class Stat {
         static CoreStats Core => CoreStats.Instance;
 
