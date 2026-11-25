@@ -1,0 +1,33 @@
+namespace ChronoDigger.Combat.Stats {
+    /// <summary>
+    /// Registry of the few stats engine code names directly. Everything else is reached
+    /// through data (DamageType.resistanceStat, spell fields, equipment).
+    /// </summary>
+    // [CreateAssetMenu(menuName = "Combat/Core Stats")]
+    public class CoreStats /* : ScriptableObject */ {
+        public StatDefinition MaxHealth, MaxMana, Defence, Wizardry, Warrior;
+
+        static CoreStats _instance;
+
+        public static CoreStats Instance {
+            get {
+                // Unity version: _instance = Resources.Load<CoreStats>("CoreStats");
+                // Explicit null check, not ??=, because Unity overloads == on UnityEngine.Object.
+                if (_instance == null) _instance = CreateDefault();
+                return _instance;
+            }
+        }
+
+        /// <summary>Lets tests swap in their own instance. Pass null to go back to the default.</summary>
+        public static void SetInstance(CoreStats instance) => _instance = instance;
+
+        // Temporary, Unity-free. Replaced by the Resources asset once this moves into Unity.
+        static CoreStats CreateDefault() => new CoreStats {
+            MaxHealth = SampleStatData.MaxHealth,
+            MaxMana = SampleStatData.MaxMana,
+            Defence = SampleStatData.Defence,
+            Wizardry = SampleStatData.Wizardry,
+            Warrior = SampleStatData.Warrior,
+        };
+    }
+}
