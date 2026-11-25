@@ -15,14 +15,10 @@ namespace Marple.Core {
             modifiers = modifiersN.ToList();
         }
 
-        /// <summary>
-        /// Builds a record holding this list's modifiers, keyed by
-        /// <paramref name="source"/> and each modifier's position in the list.
-        /// </summary>
-        public AmountModifierRecord GetRecord(object source) {
+        public AmountModifierRecord GetRecord(object source, IDescribable describable = null, TextState state = default) {
             var record = new AmountModifierRecord();
             for (int i = 0; i < modifiers.Count; i++) {
-                record.Add(source, i, modifiers[i]);
+                record.Add(source, i, new AmountModifierRecord.Entry(modifiers[i], describable, state));
             }
             return record;
         }
@@ -71,9 +67,5 @@ namespace Marple.Core {
         public static List<AmountModifier> Flatten(params AmountModifierList[] modifierLists) {
             return modifierLists.SelectMany(modList => modList.modifiers).ToList();
         }
-
-        public static AmountModifierList UpgradeStandard() => new AmountModifierList(AmountModifier.Diminishing(0.75), AmountModifier.Stacking(0.15));
-        public static AmountModifierList LevelingStandard() => new AmountModifierList(AmountModifier.Diminishing(0.9), AmountModifier.Stacking(0.15));
-        public static AmountModifierList ScalingStandard() => new AmountModifierList(AmountModifier.Stacking(0.15));
     }
 }
