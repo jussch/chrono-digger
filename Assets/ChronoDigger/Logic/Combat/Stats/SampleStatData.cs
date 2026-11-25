@@ -13,9 +13,21 @@ namespace ChronoDigger.Combat.Stats {
         public static readonly StatDefinition MaxHealth = new StatDefinition {
             displayName = "Max Health", defaultValue = 100, category = StatCategory.Combat,
         };
+        public static readonly StatDefinition HealthRegenTime = new StatDefinition {
+            displayName = "Health Regen Time", defaultValue = 10, category = StatCategory.Combat,
+        };
+        public static readonly StatDefinition HealthRegen = new StatDefinition {
+            displayName = "Health Regen", defaultValue = 1, category = StatCategory.Combat,
+        };
 
         public static readonly StatDefinition MaxMana = new StatDefinition {
             displayName = "Max Mana", defaultValue = 20, category = StatCategory.Combat,
+        };
+        public static readonly StatDefinition ManaRegenTime = new StatDefinition {
+            displayName = "Mana Regen Time", defaultValue = 4, category = StatCategory.Combat,
+        };
+        public static readonly StatDefinition ManaRegen = new StatDefinition {
+            displayName = "Mana Regen", defaultValue = 2, category = StatCategory.Combat,
         };
 
         public static readonly StatDefinition Defence = new StatDefinition {
@@ -25,7 +37,7 @@ namespace ChronoDigger.Combat.Stats {
         public static readonly StatDefinition Wizardry = new StatDefinition {
             displayName = "Wizardry", defaultValue = 0, category = StatCategory.Class,
             derivations = new List<StatModifier> {
-                new StatModifier { target = MaxMana, perPoint = AmountModifier.Raw(ManaPerWizardry) },
+                new StatModifier { stat = MaxMana, modifier = AmountModifier.Raw(ManaPerWizardry) },
             },
         };
 

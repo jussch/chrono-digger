@@ -108,7 +108,7 @@ namespace ChronoDigger.Tests.Stats {
             var wizardry = TestStats.Create("Wizardry");
             var maxMana = TestStats.Create("Max Mana");
             var derivation = TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
-            AmountModifier original = derivation.perPoint;
+            AmountModifier original = derivation.modifier;
             var block = new StatBlock(TestStats.Profile((wizardry, 3)));
 
             for (int i = 0; i < 100; i++) {
@@ -116,7 +116,7 @@ namespace ChronoDigger.Tests.Stats {
                 block.Calculate();
             }
 
-            Assert.AreEqual(original, derivation.perPoint);
+            Assert.AreEqual(original, derivation.modifier);
             Assert.AreEqual((Amount)((3 + 99) * 5), block.Get(maxMana));
         }
 
@@ -154,6 +154,19 @@ namespace ChronoDigger.Tests.Stats {
             var block = new StatBlock(TestStats.Profile((a, 1)));
 
             Assert.DoesNotThrow(() => block.Calculate());
+        }
+
+        [Test]
+        public void Calculate_IdenticalDerivations_AppliesEach() {
+            var wizardry = TestStats.Create("Wizardry");
+            var maxMana = TestStats.Create("Max Mana", 20);
+            TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
+            TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
+            var block = new StatBlock(TestStats.Profile((wizardry, 3)));
+
+            block.Calculate();
+
+            Assert.AreEqual((Amount)50, block.Get(maxMana));
         }
     }
 }

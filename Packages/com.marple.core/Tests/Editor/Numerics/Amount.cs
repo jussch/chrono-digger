@@ -41,7 +41,7 @@ namespace Marple.Core.Tests {
         // ------------------------------------------------------------------
 
         [Test]
-        public void Add_Works() => Assert.AreEqual(4, (Amount.Wrap(1) + Amount.Wrap(3)).FloorToIntClamped());
+        public void Add_Works() => Assert.AreEqual(4, (Amount.Wrap(1) + Amount.Wrap(3)).ToInt());
 
         [Test]
         public void Subtract_Works() => Assert.AreEqual(Amount.Wrap(-2), Amount.Wrap(1) - Amount.Wrap(3));
@@ -272,7 +272,7 @@ namespace Marple.Core.Tests {
         [TestCase(-1e20, int.MinValue)]
         [TestCase(2147483647.5, int.MaxValue)]
         public void FloorToIntClamped_FloorsAndClamps(double value, int expected) =>
-            Assert.AreEqual(expected, Amount.Wrap(value).FloorToIntClamped());
+            Assert.AreEqual(expected, Amount.Wrap(value).ToInt());
 
         // ------------------------------------------------------------------
         // Display

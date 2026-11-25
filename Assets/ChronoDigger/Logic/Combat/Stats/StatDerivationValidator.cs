@@ -24,7 +24,7 @@ namespace ChronoDigger.Combat.Stats {
             path.Add(stat);
             if (stat.derivations != null) {
                 foreach (var derivation in stat.derivations) {
-                    var cycle = Visit(derivation?.target, path, cleared);
+                    var cycle = Visit(derivation.stat, path, cleared);
                     if (cycle != null) return cycle;
                 }
             }

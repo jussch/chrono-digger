@@ -173,9 +173,9 @@ namespace Marple.Core {
         /// Floors to an int, clamped to int range. For bridging into systems that
         /// genuinely count things (e.g. "how many purchases can I afford").
         /// </summary>
-        public int ToInt() => (int)Math.Floor(_value);
-        public int FloorToIntClamped() {
-            double floored = Math.Floor(_value);
+        public int ToInt() {
+            // We add a small amount to avoid floating point error issues at x.999
+            double floored = Math.Floor(_value + 0.0001);
             if (floored >= int.MaxValue) return int.MaxValue;
             if (floored <= int.MinValue) return int.MinValue;
             return (int)floored;

@@ -5,7 +5,9 @@ namespace ChronoDigger.Combat.Stats {
     /// </summary>
     // [CreateAssetMenu(menuName = "Combat/Core Stats")]
     public class CoreStats /* : ScriptableObject */ {
-        public StatDefinition MaxHealth, MaxMana, Defence, Wizardry, Warrior;
+        public StatDefinition MaxHealth, HealthRegenTime, HealthRegen, 
+                            MaxMana, ManaRegenTime, ManaRegen, 
+                            Defence, Wizardry, Warrior;
 
         private static CoreStats _instance;
 
@@ -24,7 +26,11 @@ namespace ChronoDigger.Combat.Stats {
         // Temporary, Unity-free. Replaced by the Resources asset once this moves into Unity.
         private static CoreStats CreateDefault() => new CoreStats {
             MaxHealth = SampleStatData.MaxHealth,
+            HealthRegenTime = SampleStatData.HealthRegenTime,
+            HealthRegen = SampleStatData.HealthRegen,
             MaxMana = SampleStatData.MaxMana,
+            ManaRegenTime = SampleStatData.ManaRegenTime,
+            ManaRegen = SampleStatData.ManaRegen,
             Defence = SampleStatData.Defence,
             Wizardry = SampleStatData.Wizardry,
             Warrior = SampleStatData.Warrior,

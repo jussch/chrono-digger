@@ -11,8 +11,8 @@ namespace ChronoDigger.Tests.Stats {
         public static StatDefinition Create(string name, double defaultValue = 0)
             => new StatDefinition { displayName = name, defaultValue = defaultValue };
 
-        public static StatModifier Derive(StatDefinition source, StatDefinition target, AmountModifier perPoint) {
-            var derivation = new StatModifier { target = target, perPoint = perPoint };
+        public static StatModifier Derive(StatDefinition source, StatDefinition stat, AmountModifier modifier) {
+            var derivation = new StatModifier { stat = stat, modifier = modifier };
             source.derivations.Add(derivation);
             return derivation;
         }

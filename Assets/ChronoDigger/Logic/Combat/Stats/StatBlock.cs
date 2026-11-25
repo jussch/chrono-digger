@@ -50,13 +50,14 @@ namespace ChronoDigger.Combat.Stats {
                 if (source.derivations == null) continue;
 
                 Amount sourceValue = _amounts[source].GetValue();
-                foreach (var derivation in source.derivations) {
-                    if (!_amounts.ContainsKey(derivation.target)) stats.Add(derivation.target);
+                for (int d = 0; d < source.derivations.Count; d++) {
+                    var derivation = source.derivations[d];
+                    if (!_amounts.ContainsKey(derivation.stat)) stats.Add(derivation.stat);
 
-                    // MultiplyScalar returns a new modifier, so the shared perPoint is never changed.
-                    // Keyed by the derivation, so each call replaces the previous value.
-                    var modifier = derivation.perPoint.MultiplyScalar(sourceValue);
-                    GetAmount(derivation.target).Add(derivation, modifier.With(source));
+                    // MultiplyScalar returns a new modifier, so the shared modifier is never changed.
+                    // Keyed by source and index, so each call replaces the previous value.
+                    var scaled = derivation.modifier.MultiplyScalar(sourceValue);
+                    GetAmount(derivation.stat).Add(source, d, scaled.With(source));
                 }
             }
         }

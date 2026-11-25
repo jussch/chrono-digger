@@ -56,20 +56,20 @@ public enum StatCategory { Combat, Class, Resistance, Misc }
 
 `StatCategory` is a short, stable enum used only for grouping. Logic must never branch on it.
 
-### `StatModifier` (serializable class)
+### `StatModifier` (serializable struct)
 
-A rule saying "for each point of this stat, apply `perPoint` to `target`."
+A rule saying "for each point of this stat, apply `modifier` to `stat`."
 
 ```csharp
 [Serializable]
-public class StatModifier
+public struct StatModifier
 {
-    public StatDefinition target;
-    public AmountModifier perPoint; // e.g. +5 flat MaxMana per Wizardry, or +2%
+    public StatDefinition stat;
+    public AmountModifier modifier; // e.g. +5 flat MaxMana per Wizardry, or +2%
 }
 ```
 
-At runtime the live modifier is `perPoint.MultiplyScalar(sourceValue)`.
+At runtime the live modifier is `modifier.MultiplyScalar(sourceValue)`.
 
 ### `DamageType` (ScriptableObject)
 
@@ -181,10 +181,10 @@ public class StatBlock
 **Derived stats (push-based):**
 - Keep one live modifier per derivation per StatBlock: `Dictionary<StatModifier, AmountModifier> _derived`.
 - When a source stat changes:
-  1. For each `StatModifier` on the source's definition, compute `perPoint.MultiplyScalar(newValue)`.
+  1. For each `StatModifier` on the source's definition, compute `modifier.MultiplyScalar(newValue)`.
   2. Replace that derivation's live modifier on the target's `ModifiableAmount` (remove the old one, add the new one, since `MultiplyScalar` returns a new instance). If `AmountModifier` has a clean way to update its value in place, prefer that.
   3. The target's own change then fires and propagates naturally, so chains (A → B → C) work without extra code.
-- **Never mutate** `StatModifier.perPoint`. It is shared asset data.
+- **Never mutate** `StatModifier.modifier`. It is shared asset data.
 - Tag derived modifiers with their source stat if `AmountModifier` supports a source or tag field, so debug views can show where a value came from.
 
 **Change events:** if `ModifiableAmount` already raises an event when its value changes, subscribe to it. If it doesn't, **stop and ask** before modifying MarpleCore, and propose the smallest change (a single `event Action Changed` is probably enough).
@@ -213,7 +213,7 @@ Derivations must not form a cycle (A feeds B feeds A), or propagation will recur
    - adding a modifier through `GetAmount` changes `Get`
    - derived stat updates when the source changes (Wizardry +1 → MaxMana goes up by N)
    - a chain of two derivations propagates
-   - `perPoint` on the asset is unchanged after many updates
+   - `modifier` on the asset is unchanged after many updates
    - cycle validation catches A → B → A
 5. A short summary of any places where the existing `ModifiableAmount`/`AmountModifier` API forced a deviation from this doc.
 
