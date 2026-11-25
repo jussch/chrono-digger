@@ -1,0 +1,5 @@
+{
+  "name": "Marple.Core",
+  "rootNamespace": "Marple.Core",
+  "noEngineReferences": true
+}

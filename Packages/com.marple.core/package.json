@@ -1,0 +1,7 @@
+{
+  "name": "com.marple.core",
+  "version": "0.1.0",
+  "displayName": "Marple Core",
+  "description": "Reusable gameplay code by Marple Games.",
+  "unity": "2022.3"
+}
