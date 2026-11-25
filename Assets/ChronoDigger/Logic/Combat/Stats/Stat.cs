@@ -1,6 +1,6 @@
 namespace ChronoDigger.Combat.Stats {
     public static class Stat {
-        static CoreStats Core => CoreStats.Instance;
+        private static CoreStats Core => CoreStats.Instance;
 
         public static StatDefinition MaxHealth => Core.MaxHealth;
         public static StatDefinition MaxMana   => Core.MaxMana;

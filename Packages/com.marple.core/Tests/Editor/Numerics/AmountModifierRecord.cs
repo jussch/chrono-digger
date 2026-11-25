@@ -1,12 +1,9 @@
 using NUnit.Framework;
 using Marple.Core;
 
-namespace Marple.Core.Tests
-{
-    public class AmountModifierRecordTests
-    {
-        private class TestDescribable : IDescribable
-        {
+namespace Marple.Core.Tests {
+    public class AmountModifierRecordTests {
+        private class TestDescribable : IDescribable {
             public string DisplayName => "Upgrade";
             public string Description => "A test upgrade";
         }
@@ -14,8 +11,7 @@ namespace Marple.Core.Tests
         private readonly object source = new object();
 
         [Test]
-        public void Add_BareModifier_StoresEntryWithNoDisplayInfo()
-        {
+        public void Add_BareModifier_StoresEntryWithNoDisplayInfo() {
             var record = new AmountModifierRecord();
             record.Add(source, AmountModifier.Raw(5));
 
@@ -27,8 +23,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void Add_FluentEntry_StoresDescribableAndState()
-        {
+        public void Add_FluentEntry_StoresDescribableAndState() {
             var record = new AmountModifierRecord();
             var describable = new TestDescribable();
             record.Add(source, 2, AmountModifier.Raw(5).With(describable).With(TextState.insufficient));
@@ -39,8 +34,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void With_StateFirst_ThenDescribable_KeepsBoth()
-        {
+        public void With_StateFirst_ThenDescribable_KeepsBoth() {
             var describable = new TestDescribable();
             var entry = AmountModifier.Raw(1).With(TextState.insufficient).With(describable);
 
@@ -49,8 +43,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void WithModifier_PreservesDisplayInfo()
-        {
+        public void WithModifier_PreservesDisplayInfo() {
             var describable = new TestDescribable();
             var entry = AmountModifier.Raw(1).With(describable).With(TextState.insufficient)
                 .WithModifier(AmountModifier.Raw(2));
@@ -61,8 +54,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void Add_EmptyModifier_RemovesKey()
-        {
+        public void Add_EmptyModifier_RemovesKey() {
             var record = new AmountModifierRecord();
             record.Add(source, AmountModifier.Raw(5));
             record.Add(source, AmountModifier.Raw(0).With(TextState.insufficient));
@@ -71,8 +63,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void Toggle_AddsAndRemovesEntry()
-        {
+        public void Toggle_AddsAndRemovesEntry() {
             var record = new AmountModifierRecord();
             var key = new AmountModifierKey(source);
 
@@ -84,8 +75,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void MergingRecord_PropagatesDisplayInfoToMergedRecords()
-        {
+        public void MergingRecord_PropagatesDisplayInfoToMergedRecords() {
             var merging = new MergingModifierRecord();
             var target = new AmountModifierRecord();
             merging.AddRecord(target);
@@ -99,14 +89,12 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void ModifierList_GetRecord_AppliesDisplayInfoToEveryEntry()
-        {
+        public void ModifierList_GetRecord_AppliesDisplayInfoToEveryEntry() {
             var list = new AmountModifierList(AmountModifier.Raw(1), AmountModifier.Raw(2));
             var describable = new TestDescribable();
             var record = list.GetRecord(source, describable, TextState.insufficient);
 
-            foreach (var entry in record.modifiers.Values)
-            {
+            foreach (var entry in record.modifiers.Values) {
                 Assert.AreSame(describable, entry.Describable);
                 Assert.AreEqual(TextState.TextStateType.Insufficient, entry.State.type);
             }

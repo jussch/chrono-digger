@@ -2,13 +2,10 @@ using ChronoDigger.Combat.Stats;
 using Marple.Core;
 using NUnit.Framework;
 
-namespace ChronoDigger.Tests.Stats
-{
-    public class StatDerivationValidatorTests
-    {
+namespace ChronoDigger.Tests.Stats {
+    public class StatDerivationValidatorTests {
         [Test]
-        public void FindCycle_AToBToA_ReturnsPath()
-        {
+        public void FindCycle_AToBToA_ReturnsPath() {
             var a = TestStats.Create("A");
             var b = TestStats.Create("B");
             TestStats.Derive(a, b, AmountModifier.Raw(1));
@@ -18,8 +15,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void FindCycle_ChainWithoutCycle_ReturnsNull()
-        {
+        public void FindCycle_ChainWithoutCycle_ReturnsNull() {
             var a = TestStats.Create("A");
             var b = TestStats.Create("B");
             var c = TestStats.Create("C");
@@ -31,8 +27,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void FindCycle_SelfReference_ReturnsPath()
-        {
+        public void FindCycle_SelfReference_ReturnsPath() {
             var a = TestStats.Create("A");
             TestStats.Derive(a, a, AmountModifier.Raw(1));
 
@@ -40,8 +35,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void FindCycle_SampleData_HasNoCycles()
-        {
+        public void FindCycle_SampleData_HasNoCycles() {
             Assert.IsNull(StatDerivationValidator.FindCycle(SampleStatData.Wizardry));
         }
     }

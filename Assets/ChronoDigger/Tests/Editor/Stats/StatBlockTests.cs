@@ -3,15 +3,12 @@ using ChronoDigger.Combat.Stats;
 using Marple.Core;
 using NUnit.Framework;
 
-namespace ChronoDigger.Tests.Stats
-{
-    public class StatBlockTests
-    {
-        readonly object buff = new object();
+namespace ChronoDigger.Tests.Stats {
+    public class StatBlockTests {
+        private readonly object buff = new object();
 
         [Test]
-        public void Get_NotOverridden_ReturnsDefault()
-        {
+        public void Get_NotOverridden_ReturnsDefault() {
             var defence = TestStats.Create("Defence", 7);
             var block = new StatBlock(TestStats.Profile());
 
@@ -19,8 +16,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Get_Overridden_ReturnsProfileValue()
-        {
+        public void Get_Overridden_ReturnsProfileValue() {
             var defence = TestStats.Create("Defence", 7);
             var block = new StatBlock(TestStats.Profile((defence, 12)));
 
@@ -28,8 +24,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void GetAmount_NotOverridden_SeededFromDefault()
-        {
+        public void GetAmount_NotOverridden_SeededFromDefault() {
             var defence = TestStats.Create("Defence", 7);
             var block = new StatBlock(TestStats.Profile());
 
@@ -37,8 +32,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void AddingModifierThroughGetAmount_ChangesGet()
-        {
+        public void AddingModifierThroughGetAmount_ChangesGet() {
             var defence = TestStats.Create("Defence", 7);
             var block = new StatBlock(TestStats.Profile());
 
@@ -48,8 +42,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Derivation_AppliedFromProfileAtStart()
-        {
+        public void Derivation_AppliedFromProfileAtStart() {
             var wizardry = TestStats.Create("Wizardry");
             var maxMana = TestStats.Create("Max Mana", 20);
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
@@ -61,8 +54,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Derivation_UpdatesWhenSourceChanges()
-        {
+        public void Derivation_UpdatesWhenSourceChanges() {
             var wizardry = TestStats.Create("Wizardry");
             var maxMana = TestStats.Create("Max Mana", 20);
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
@@ -77,8 +69,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Derivation_RemovingSourceModifier_RevertsTarget()
-        {
+        public void Derivation_RemovingSourceModifier_RevertsTarget() {
             var wizardry = TestStats.Create("Wizardry");
             var maxMana = TestStats.Create("Max Mana", 20);
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
@@ -93,8 +84,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Derivation_ChainOfTwo_Propagates()
-        {
+        public void Derivation_ChainOfTwo_Propagates() {
             var a = TestStats.Create("A");
             var b = TestStats.Create("B");
             var c = TestStats.Create("C");
@@ -114,16 +104,14 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Derivation_PerPointUnchangedAfterManyUpdates()
-        {
+        public void Derivation_PerPointUnchangedAfterManyUpdates() {
             var wizardry = TestStats.Create("Wizardry");
             var maxMana = TestStats.Create("Max Mana");
             var derivation = TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
             AmountModifier original = derivation.perPoint;
             var block = new StatBlock(TestStats.Profile((wizardry, 3)));
 
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(i));
                 block.Calculate();
             }
@@ -133,8 +121,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Derivation_SharedAcrossBlocks_DoesNotLeak()
-        {
+        public void Derivation_SharedAcrossBlocks_DoesNotLeak() {
             var wizardry = TestStats.Create("Wizardry");
             var maxMana = TestStats.Create("Max Mana");
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
@@ -148,21 +135,18 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Constructor_NullStat_Throws()
-        {
+        public void Constructor_NullStat_Throws() {
             Assert.Throws<ArgumentException>(() => new StatBlock(TestStats.Profile((null, 1))));
         }
 
         [Test]
-        public void Constructor_DuplicateStat_Throws()
-        {
+        public void Constructor_DuplicateStat_Throws() {
             var defence = TestStats.Create("Defence");
             Assert.Throws<ArgumentException>(() => new StatBlock(TestStats.Profile((defence, 1), (defence, 2))));
         }
 
         [Test]
-        public void Calculate_DerivationCycle_Terminates()
-        {
+        public void Calculate_DerivationCycle_Terminates() {
             var a = TestStats.Create("A");
             var b = TestStats.Create("B");
             TestStats.Derive(a, b, AmountModifier.Raw(1));

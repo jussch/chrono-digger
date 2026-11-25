@@ -41,7 +41,8 @@ Run the tests after every change. Marple.Core can also be tested on its own from
 - Keep **authored data** (definitions, profiles; future assets) separate from **runtime data** (e.g. `StatBlock`). Runtime classes never write back to authored data.
 - Use one class per file, organized by namespace and folder.
 - Keep comments few. In game code, write a `///` doc comment only when a member's behaviour, constraints or exceptions aren't obvious from its name, and never one that just repeats the name. Marple.Core is a shared library, so document its public API more fully.
-- Match the brace style of the file you're editing (logic uses same-line braces; some test files use next-line braces).
+- Always write the access modifier on members such as fields, properties, methods and constructors, including `private`. Don't rely on the default.
+- Put opening braces on the same line for classes, methods and blocks: `public class StatBlock {`, `if (x) {`.
 - Test names follow `Method_Condition_Result`, e.g. `Get_NotOverridden_ReturnsDefault`.
 - Write tests with NUnit 3 (classic `Assert.AreEqual` style), which matches Unity's test framework so tests port over.
 

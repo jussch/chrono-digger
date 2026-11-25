@@ -4,24 +4,20 @@ using System.Threading;
 using NUnit.Framework;
 using Marple.Core;
 
-namespace Marple.Core.Tests
-{
-    public class AmountTests
-    {
+namespace Marple.Core.Tests {
+    public class AmountTests {
         // ------------------------------------------------------------------
         // Creation
         // ------------------------------------------------------------------
 
         [Test]
-        public void Constants_HaveExpectedValues()
-        {
+        public void Constants_HaveExpectedValues() {
             Assert.IsTrue(Amount.Zero.IsZero);
             Assert.AreEqual(1d, Amount.One.ToDouble());
         }
 
         [Test]
-        public void ImplicitConversion_FromDoubleAndInt()
-        {
+        public void ImplicitConversion_FromDoubleAndInt() {
             Amount fromDouble = 2.5;
             Amount fromInt = 7;
             Assert.AreEqual(2.5d, fromDouble.ToDouble());
@@ -29,15 +25,13 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void FromScientific_BuildsMantissaTimesPowerOfTen()
-        {
+        public void FromScientific_BuildsMantissaTimesPowerOfTen() {
             Assert.IsTrue(Amount.FromScientific(1.5, 40).ApproximatelyEquals(1.5e40));
             Assert.IsTrue(Amount.FromScientific(2, -3).ApproximatelyEquals(0.002));
         }
 
         [Test]
-        public void Pow10_BuildsPowerOfTen()
-        {
+        public void Pow10_BuildsPowerOfTen() {
             Assert.AreEqual(1000d, Amount.Pow10(3).ToDouble());
             Assert.AreEqual(1d, Amount.Pow10(0).ToDouble());
         }
@@ -62,8 +56,7 @@ namespace Marple.Core.Tests
         public void Negate_Works() => Assert.AreEqual(Amount.Wrap(-5), -Amount.Wrap(5));
 
         [Test]
-        public void NamedArithmetic_MatchesOperators()
-        {
+        public void NamedArithmetic_MatchesOperators() {
             Amount a = 12, b = 4;
             Assert.AreEqual(a + b, Amount.Add(a, b));
             Assert.AreEqual(a - b, Amount.Subtract(a, b));
@@ -72,8 +65,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void InstanceArithmetic_MatchesOperators()
-        {
+        public void InstanceArithmetic_MatchesOperators() {
             Amount a = 12, b = 4;
             Assert.AreEqual(a + b, a.Add(b));
             Assert.AreEqual(a - b, a.Subtract(b));
@@ -82,16 +74,14 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void InstanceArithmetic_DoesNotMutateReceiver()
-        {
+        public void InstanceArithmetic_DoesNotMutateReceiver() {
             Amount a = 12;
             a.Add(4);
             Assert.AreEqual(Amount.Wrap(12), a);
         }
 
         [Test]
-        public void Arithmetic_HandlesHugeValues()
-        {
+        public void Arithmetic_HandlesHugeValues() {
             Amount big = Amount.FromScientific(1, 300);
             Assert.IsTrue((big * 1000).ApproximatelyEquals(Amount.FromScientific(1, 303)));
         }
@@ -131,8 +121,7 @@ namespace Marple.Core.Tests
         // ------------------------------------------------------------------
 
         [Test]
-        public void ComparisonOperators_Work()
-        {
+        public void ComparisonOperators_Work() {
             Amount small = 1, large = 2, alsoSmall = 1;
             Assert.IsTrue(small < large);
             Assert.IsTrue(large > small);
@@ -143,8 +132,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void Equals_AndHashCode_AgreeForEqualValues()
-        {
+        public void Equals_AndHashCode_AgreeForEqualValues() {
             Amount a = 3.25, b = 3.25;
             Assert.IsTrue(a.Equals(b));
             Assert.IsTrue(a.Equals((object)b));
@@ -152,15 +140,13 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void Equals_Object_RejectsOtherTypes()
-        {
+        public void Equals_Object_RejectsOtherTypes() {
             Assert.IsFalse(Amount.One.Equals((object)1d));
             Assert.IsFalse(Amount.One.Equals(null));
         }
 
         [Test]
-        public void NegativeZero_EqualsZero_IncludingHashCode()
-        {
+        public void NegativeZero_EqualsZero_IncludingHashCode() {
             Amount negZero = -Amount.Zero;
             Assert.IsTrue(negZero == Amount.Zero);
             Assert.IsTrue(negZero.Equals(Amount.Zero));
@@ -168,39 +154,34 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void CompareTo_OrdersCorrectly()
-        {
+        public void CompareTo_OrdersCorrectly() {
             Assert.Less(Amount.Wrap(1).CompareTo(Amount.Wrap(2)), 0);
             Assert.Greater(Amount.Wrap(2).CompareTo(Amount.Wrap(1)), 0);
             Assert.AreEqual(0, Amount.Wrap(2).CompareTo(Amount.Wrap(2)));
         }
 
         [Test]
-        public void CompareTo_Object_HandlesNullAndWrongType()
-        {
+        public void CompareTo_Object_HandlesNullAndWrongType() {
             Assert.AreEqual(1, Amount.One.CompareTo(null));
             Assert.AreEqual(0, Amount.One.CompareTo((object)Amount.One));
             Assert.Throws<ArgumentException>(() => Amount.One.CompareTo("1"));
         }
 
         [Test]
-        public void ApproximatelyEquals_ToleratesFloatingPointDrift()
-        {
+        public void ApproximatelyEquals_ToleratesFloatingPointDrift() {
             Amount drifted = Amount.Wrap(0.1) + Amount.Wrap(0.2);
             Assert.IsFalse(drifted == Amount.Wrap(0.3));
             Assert.IsTrue(drifted.ApproximatelyEquals(0.3));
         }
 
         [Test]
-        public void ApproximatelyEquals_RejectsRealDifferences()
-        {
+        public void ApproximatelyEquals_RejectsRealDifferences() {
             Assert.IsFalse(Amount.Wrap(100).ApproximatelyEquals(101));
             Assert.IsFalse(Amount.Zero.ApproximatelyEquals(1e-300));
         }
 
         [Test]
-        public void ApproximatelyEquals_IsRelativeAtLargeScale()
-        {
+        public void ApproximatelyEquals_IsRelativeAtLargeScale() {
             Amount a = Amount.FromScientific(1, 100);
             Amount b = a * (1 + 1e-12);
             Assert.IsTrue(a.ApproximatelyEquals(b));
@@ -211,8 +192,7 @@ namespace Marple.Core.Tests
         // ------------------------------------------------------------------
 
         [Test]
-        public void SignQueries_Work()
-        {
+        public void SignQueries_Work() {
             Assert.IsTrue(Amount.Wrap(5).IsPositive);
             Assert.IsTrue(Amount.Wrap(-5).IsNegative);
             Assert.IsFalse(Amount.Zero.IsPositive);
@@ -228,18 +208,15 @@ namespace Marple.Core.Tests
         [TestCase(999.0, 2, 9.99)]
         [TestCase(-4500.0, 3, -4.5)]
         [TestCase(0.0, 0, 0.0)]
-        public void ExponentAndMantissa_Decompose(double value, int exponent, double mantissa)
-        {
+        public void ExponentAndMantissa_Decompose(double value, int exponent, double mantissa) {
             Amount a = value;
             Assert.AreEqual(exponent, a.Exponent);
             Assert.AreEqual(mantissa, a.Mantissa, 1e-9);
         }
 
         [Test]
-        public void Mantissa_StaysInRange_ForEveryPowerOfTen()
-        {
-            for (int e = -300; e <= 300; e++)
-            {
+        public void Mantissa_StaysInRange_ForEveryPowerOfTen() {
+            for (int e = -300; e <= 300; e++) {
                 Amount a = Amount.Pow10(e);
                 Assert.AreEqual(e, a.Exponent, $"Exponent of 1e{e}");
                 Assert.That(a.Mantissa, Is.GreaterThanOrEqualTo(1d).And.LessThan(10d), $"Mantissa of 1e{e}");
@@ -251,8 +228,7 @@ namespace Marple.Core.Tests
         // ------------------------------------------------------------------
 
         [Test]
-        public void AbsMinMaxClamp_Work()
-        {
+        public void AbsMinMaxClamp_Work() {
             Assert.AreEqual(Amount.Wrap(3), Amount.Abs(-3));
             Assert.AreEqual(Amount.Wrap(2), Amount.Min(2, 5));
             Assert.AreEqual(Amount.Wrap(5), Amount.Max(2, 5));
@@ -265,24 +241,21 @@ namespace Marple.Core.Tests
         [TestCase(-2.5, -3.0, -2.0, -3.0)]
         [TestCase(2.4, 2.0, 3.0, 2.0)]
         [TestCase(4.0, 4.0, 4.0, 4.0)]
-        public void FloorCeilingRound_Work(double value, double floor, double ceiling, double round)
-        {
+        public void FloorCeilingRound_Work(double value, double floor, double ceiling, double round) {
             Assert.AreEqual(floor, Amount.Floor(value).ToDouble());
             Assert.AreEqual(ceiling, Amount.Ceiling(value).ToDouble());
             Assert.AreEqual(round, Amount.Round(value).ToDouble(), "Round should be away from zero");
         }
 
         [Test]
-        public void PowAndSqrt_Work()
-        {
+        public void PowAndSqrt_Work() {
             Assert.AreEqual(Amount.Wrap(8), Amount.Pow(2, 3));
             Assert.AreEqual(Amount.Wrap(3), Amount.Sqrt(9));
             Assert.IsTrue(Amount.Pow(1.15, 10).ApproximatelyEquals(4.0455577357079067));
         }
 
         [Test]
-        public void Logs_Work()
-        {
+        public void Logs_Work() {
             Assert.AreEqual(40d, Amount.Log10(Amount.Pow10(40)), 1e-12);
             Assert.AreEqual(1d, Amount.Ln(Math.E), 1e-12);
             Assert.AreEqual(10d, Amount.Log(1024, 2), 1e-12);
@@ -324,33 +297,27 @@ namespace Marple.Core.Tests
             Assert.AreEqual("1.00e7", Amount.Wrap(9.9996e6).Format());
 
         [Test]
-        public void Format_RespectsSignificantDigitsAndThreshold()
-        {
+        public void Format_RespectsSignificantDigitsAndThreshold() {
             Assert.AreEqual("1.2346e45", Amount.Wrap(1.23456e45).Format(significantDigits: 5));
             Assert.AreEqual("1e45", Amount.Wrap(1.23456e45).Format(significantDigits: 1));
             Assert.AreEqual("1.50e3", Amount.Wrap(1500).Format(scientificThreshold: 1000));
         }
 
         [Test]
-        public void Format_NeverShowsNegativeZero()
-        {
+        public void Format_NeverShowsNegativeZero() {
             Assert.AreEqual("0", (-Amount.Zero).Format());
             Assert.AreEqual("0", Amount.Round(-0.4).Format());
         }
 
         [Test]
-        public void Format_IgnoresCurrentCulture()
-        {
+        public void Format_IgnoresCurrentCulture() {
             CultureInfo previous = Thread.CurrentThread.CurrentCulture;
-            try
-            {
+            try {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
                 Assert.AreEqual("3.5", Amount.Wrap(3.5).Format());
                 Assert.AreEqual("45,210", Amount.Wrap(45210).Format());
                 Assert.AreEqual("1.23e45", Amount.Wrap(1.23456e45).Format());
-            }
-            finally
-            {
+            } finally {
                 Thread.CurrentThread.CurrentCulture = previous;
             }
         }
@@ -369,32 +336,26 @@ namespace Marple.Core.Tests
         [TestCase(0.30000000000000004)]
         [TestCase(1.2345678901234567e300)]
         [TestCase(5e-324)]
-        public void SaveString_RoundTripsExactly(double value)
-        {
+        public void SaveString_RoundTripsExactly(double value) {
             Amount original = value;
             Amount loaded = Amount.Parse(original.ToSaveString());
             Assert.AreEqual(original, loaded);
         }
 
         [Test]
-        public void SaveString_IgnoresCurrentCulture()
-        {
+        public void SaveString_IgnoresCurrentCulture() {
             CultureInfo previous = Thread.CurrentThread.CurrentCulture;
-            try
-            {
+            try {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
                 Assert.AreEqual("1.5", Amount.Wrap(1.5).ToSaveString());
                 Assert.AreEqual(Amount.Wrap(1.5), Amount.Parse("1.5"));
-            }
-            finally
-            {
+            } finally {
                 Thread.CurrentThread.CurrentCulture = previous;
             }
         }
 
         [Test]
-        public void TryParse_AcceptsValidInput()
-        {
+        public void TryParse_AcceptsValidInput() {
             Assert.IsTrue(Amount.TryParse("1.5e40", out Amount result));
             Assert.AreEqual(Amount.FromScientific(1.5, 40), result);
         }
@@ -405,8 +366,7 @@ namespace Marple.Core.Tests
         [TestCase("NaN")]
         [TestCase("Infinity")]
         [TestCase("1e400")]
-        public void TryParse_RejectsInvalidInput(string input)
-        {
+        public void TryParse_RejectsInvalidInput(string input) {
             Assert.IsFalse(Amount.TryParse(input, out Amount result));
             Assert.AreEqual(Amount.Zero, result);
         }

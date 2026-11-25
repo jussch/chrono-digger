@@ -11,7 +11,7 @@ namespace ChronoDigger.Combat.Stats {
             return Visit(start, new List<StatDefinition>(), new HashSet<StatDefinition>());
         }
 
-        static List<StatDefinition> Visit(StatDefinition stat, List<StatDefinition> path, HashSet<StatDefinition> cleared) {
+        private static List<StatDefinition> Visit(StatDefinition stat, List<StatDefinition> path, HashSet<StatDefinition> cleared) {
             if (stat == null || cleared.Contains(stat)) return null;
 
             int index = path.IndexOf(stat);

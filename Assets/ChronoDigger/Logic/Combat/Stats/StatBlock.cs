@@ -8,7 +8,7 @@ namespace ChronoDigger.Combat.Stats {
     /// Derived stats only update when <see cref="Calculate"/> is called.
     /// </summary>
     public class StatBlock {
-        readonly Dictionary<StatDefinition, ModifiableAmount> _amounts = new Dictionary<StatDefinition, ModifiableAmount>();
+        private readonly Dictionary<StatDefinition, ModifiableAmount> _amounts = new Dictionary<StatDefinition, ModifiableAmount>();
 
         /// <exception cref="ArgumentException">The profile lists a null stat or the same stat twice.</exception>
         public StatBlock(StatProfile profile) {

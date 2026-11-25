@@ -671,8 +671,7 @@ namespace Marple.Core {
             byte[] output = Convert.FromBase64String(base64String);
             Console.WriteLine(output.Length);
             int rslt = 0;
-            for (int i = 0; i < output.Length; ++i)
-            {
+            for (int i = 0; i < output.Length; ++i) {
                 rslt <<= 8;
                 rslt += output[i];
             }

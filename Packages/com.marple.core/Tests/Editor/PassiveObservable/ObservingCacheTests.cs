@@ -1,13 +1,10 @@
 using NUnit.Framework;
 using Marple.Core;
 
-namespace Marple.Core.Tests
-{
-    public class ObservingCacheTests
-    {
+namespace Marple.Core.Tests {
+    public class ObservingCacheTests {
         [Test]
-        public void IsUpdated_FalseWhenNothingChanged()
-        {
+        public void IsUpdated_FalseWhenNothingChanged() {
             var observable = new PassiveObservable();
             var cache = new ObservingCache(observable);
 
@@ -15,8 +12,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void IsUpdated_TrueOnceAfterChange()
-        {
+        public void IsUpdated_TrueOnceAfterChange() {
             var observable = new PassiveObservable();
             var cache = new ObservingCache(observable);
 
@@ -27,8 +23,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void IsUpdated_DetectsChangeInAnyObservable()
-        {
+        public void IsUpdated_DetectsChangeInAnyObservable() {
             var first = new PassiveObservable();
             var second = new PassiveObservable();
             var cache = new ObservingCache(first, second);
@@ -39,8 +34,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void RefreshCache_SwallowsPendingChange()
-        {
+        public void RefreshCache_SwallowsPendingChange() {
             var observable = new PassiveObservable();
             var cache = new ObservingCache(observable);
 
@@ -51,8 +45,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void EnsureUpdate_ForcesOneUpdate()
-        {
+        public void EnsureUpdate_ForcesOneUpdate() {
             var cache = new ObservingCache(new PassiveObservable()).EnsureUpdate();
 
             Assert.IsTrue(cache.IsUpdated());
@@ -60,8 +53,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void Always_UpdatesEveryCheck()
-        {
+        public void Always_UpdatesEveryCheck() {
             var cache = ObservingCache.Always();
 
             Assert.IsTrue(cache.IsUpdated());
@@ -69,8 +61,7 @@ namespace Marple.Core.Tests
         }
 
         [Test]
-        public void ModifiableAmount_IdChangesWhenModifierAdded()
-        {
+        public void ModifiableAmount_IdChangesWhenModifierAdded() {
             var amount = new ModifiableAmount(10);
             var cache = new ObservingCache(amount);
 

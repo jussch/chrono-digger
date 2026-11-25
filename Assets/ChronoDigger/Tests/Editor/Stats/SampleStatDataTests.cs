@@ -2,16 +2,13 @@ using ChronoDigger.Combat.Stats;
 using Marple.Core;
 using NUnit.Framework;
 
-namespace ChronoDigger.Tests.Stats
-{
-    public class SampleStatDataTests
-    {
+namespace ChronoDigger.Tests.Stats {
+    public class SampleStatDataTests {
         [TearDown]
         public void ResetCoreStats() => CoreStats.SetInstance(null);
 
         [Test]
-        public void GoblinShaman_GetsManaFromWizardry()
-        {
+        public void GoblinShaman_GetsManaFromWizardry() {
             var block = new StatBlock(SampleStatData.GoblinShaman);
             block.Calculate();
 
@@ -20,15 +17,13 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Stat_DefaultsToSampleDefinitions()
-        {
+        public void Stat_DefaultsToSampleDefinitions() {
             Assert.AreSame(SampleStatData.Wizardry, Stat.Wizardry);
             Assert.AreSame(SampleStatData.MaxHealth, Stat.MaxHealth);
         }
 
         [Test]
-        public void Stat_FollowsSwappedInstance()
-        {
+        public void Stat_FollowsSwappedInstance() {
             var custom = TestStats.Create("Custom Health");
             CoreStats.SetInstance(new CoreStats { MaxHealth = custom });
 
@@ -36,8 +31,7 @@ namespace ChronoDigger.Tests.Stats
         }
 
         [Test]
-        public void Fire_IsResistedByFireResistance()
-        {
+        public void Fire_IsResistedByFireResistance() {
             Assert.AreSame(SampleStatData.FireResistance, SampleStatData.Fire.resistanceStat);
         }
     }

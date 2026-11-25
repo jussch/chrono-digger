@@ -2,8 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Marple.Core
-{
+namespace Marple.Core {
     /// <summary>
     /// A general-purpose game number: costs, rates, stockpiles, combat stats.
     ///
@@ -11,14 +10,12 @@ namespace Marple.Core
     /// nothing outside this struct may touch it, so Amount can later be backed by
     /// BigDouble by changing only this file.
     /// </summary>
-    public readonly struct Amount : IEquatable<Amount>, IComparable<Amount>, IComparable
-    {
+    public readonly struct Amount : IEquatable<Amount>, IComparable<Amount>, IComparable {
         private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
         private readonly double _value;
 
-        private Amount(double value)
-        {
+        private Amount(double value) {
             Validate(value);
             _value = value;
         }
@@ -32,6 +29,7 @@ namespace Marple.Core
         public static readonly Amount Eulers = new Amount(Math.E);
 
         /// <summary>Lets literals and ints flow in naturally: <c>Amount gold = 50;</c>, <c>cost * 1.5</c>.</summary>
+        public static implicit operator Amount(int value) => new Amount(value);
         public static implicit operator Amount(double value) => new Amount(value);
 
         public static Amount Wrap(double value) => new Amount(value);
@@ -84,8 +82,7 @@ namespace Marple.Core
 
         public int CompareTo(Amount other) => _value.CompareTo(other._value);
 
-        public int CompareTo(object obj)
-        {
+        public int CompareTo(object obj) {
             if (obj is null) return 1;
             if (obj is Amount other) return CompareTo(other);
             throw new ArgumentException($"Object must be of type {nameof(Amount)}.", nameof(obj));
@@ -96,8 +93,7 @@ namespace Marple.Core
         /// that went through multiplication/division (e.g. "can I afford this?" checks
         /// on values that should be equal but drifted by a rounding error).
         /// </summary>
-        public bool ApproximatelyEquals(Amount other, double relativeTolerance = 1e-9)
-        {
+        public bool ApproximatelyEquals(Amount other, double relativeTolerance = 1e-9) {
             if (_value == other._value) return true;
             double scale = Math.Max(Math.Abs(_value), Math.Abs(other._value));
             return Math.Abs(_value - other._value) <= scale * relativeTolerance;
@@ -207,15 +203,13 @@ namespace Marple.Core
         /// Player-facing text. Below the threshold: "12", "3.5", "45,210".
         /// At or above it: scientific, e.g. "1.23e45".
         /// </summary>
-        public string Format(int significantDigits = 3, double scientificThreshold = 1e6)
-        {
+        public string Format(int significantDigits = 3, double scientificThreshold = 1e6) {
             // Catches -0 too, which would otherwise print as "-0".
             if (_value == 0d) return "0";
 
             double abs = Math.Abs(_value);
 
-            if (abs < scientificThreshold)
-            {
+            if (abs < scientificThreshold) {
                 if (abs >= 1000d) return Math.Truncate(_value).ToString("N0", Culture);
                 return _value.ToString("0.##", Culture);
             }
@@ -225,8 +219,7 @@ namespace Marple.Core
             double mantissa = Math.Round(_value / Math.Pow(10d, exponent), decimals);
 
             // Rounding can push 9.9996 up to 10.00, so renormalise.
-            if (Math.Abs(mantissa) >= 10d)
-            {
+            if (Math.Abs(mantissa) >= 10d) {
                 mantissa /= 10d;
                 exponent++;
             }
@@ -250,10 +243,8 @@ namespace Marple.Core
         public static Amount Parse(string s) =>
             new Amount(double.Parse(s, NumberStyles.Float, Culture));
 
-        public static bool TryParse(string s, out Amount result)
-        {
-            if (double.TryParse(s, NumberStyles.Float, Culture, out double parsed) && IsValid(parsed))
-            {
+        public static bool TryParse(string s, out Amount result) {
+            if (double.TryParse(s, NumberStyles.Float, Culture, out double parsed) && IsValid(parsed)) {
                 result = new Amount(parsed);
                 return true;
             }
@@ -271,8 +262,7 @@ namespace Marple.Core
         // Stripped from release builds. Multiple [Conditional]s are OR'd:
         // runs in .NET debug builds and in the Unity editor / development builds.
         [Conditional("DEBUG"), Conditional("UNITY_ASSERTIONS")]
-        private static void Validate(double value)
-        {
+        private static void Validate(double value) {
             if (double.IsNaN(value))
                 throw new ArithmeticException("Amount became NaN (e.g. 0/0, Sqrt of a negative).");
 
@@ -290,10 +280,8 @@ namespace Marple.Core
 using System;
 using Newtonsoft.Json;
 
-namespace Marple.Core
-{
-    public sealed class AmountJsonConverter : JsonConverter<Amount>
-    {
+namespace Marple.Core {
+    public sealed class AmountJsonConverter : JsonConverter<Amount> {
         public override void WriteJson(JsonWriter writer, Amount value, JsonSerializer serializer) =>
             writer.WriteValue(value.ToSaveString());
 
