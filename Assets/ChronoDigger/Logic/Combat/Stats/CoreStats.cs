@@ -1,7 +1,7 @@
 namespace ChronoDigger.Combat {
     /// <summary>
     /// Registry of the few stats engine code names directly. Everything else is reached
-    /// through data (DamageType.resistanceStat, spell fields, equipment).
+    /// through data (DamageType.ResistanceStat, spell fields, equipment).
     /// </summary>
     // [CreateAssetMenu(menuName = "Combat/Core Stats")]
     public class CoreStats /* : ScriptableObject */ {

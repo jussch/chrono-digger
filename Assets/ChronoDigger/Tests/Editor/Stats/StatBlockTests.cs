@@ -3,9 +3,9 @@ using ChronoDigger.Combat;
 using Marple.Core;
 using NUnit.Framework;
 
-namespace ChronoDigger.Tests.Stats {
+namespace ChronoDigger.Tests {
     public class StatBlockTests {
-        private readonly object buff = new object();
+        private readonly object _buff = new object();
 
         [Test]
         public void Get_NotOverridden_ReturnsDefault() {
@@ -28,7 +28,7 @@ namespace ChronoDigger.Tests.Stats {
             var defence = TestStats.Create("Defence", 7);
             var block = new StatBlock(TestStats.Profile());
 
-            Assert.AreEqual(7d, block.GetAmount(defence).baseValue);
+            Assert.AreEqual(7d, block.GetAmount(defence).BaseValue);
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace ChronoDigger.Tests.Stats {
             var defence = TestStats.Create("Defence", 7);
             var block = new StatBlock(TestStats.Profile());
 
-            block.GetAmount(defence).Add(buff, AmountModifier.Raw(3));
+            block.GetAmount(defence).Add(_buff, AmountModifier.Raw(3));
 
             Assert.AreEqual((Amount)10, block.Get(defence));
         }
@@ -62,7 +62,7 @@ namespace ChronoDigger.Tests.Stats {
             block.Calculate();
             Amount before = block.Get(maxMana);
 
-            block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(1));
+            block.GetAmount(wizardry).Add(_buff, AmountModifier.Raw(1));
             block.Calculate();
 
             Assert.AreEqual(before + 5, block.Get(maxMana));
@@ -75,9 +75,9 @@ namespace ChronoDigger.Tests.Stats {
             TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
             var block = new StatBlock(TestStats.Profile((wizardry, 3)));
 
-            block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(1));
+            block.GetAmount(wizardry).Add(_buff, AmountModifier.Raw(1));
             block.Calculate();
-            block.GetAmount(wizardry).Remove(buff);
+            block.GetAmount(wizardry).Remove(_buff);
             block.Calculate();
 
             Assert.AreEqual((Amount)35, block.Get(maxMana));
@@ -96,7 +96,7 @@ namespace ChronoDigger.Tests.Stats {
             Assert.AreEqual((Amount)2, block.Get(b));
             Assert.AreEqual((Amount)20, block.Get(c));
 
-            block.GetAmount(a).Add(buff, AmountModifier.Raw(1));
+            block.GetAmount(a).Add(_buff, AmountModifier.Raw(1));
             block.Calculate();
 
             Assert.AreEqual((Amount)4, block.Get(b));
@@ -108,15 +108,15 @@ namespace ChronoDigger.Tests.Stats {
             var wizardry = TestStats.Create("Wizardry");
             var maxMana = TestStats.Create("Max Mana");
             var derivation = TestStats.Derive(wizardry, maxMana, AmountModifier.Raw(5));
-            AmountModifier original = derivation.modifier;
+            AmountModifier original = derivation.Modifier;
             var block = new StatBlock(TestStats.Profile((wizardry, 3)));
 
             for (int i = 0; i < 100; i++) {
-                block.GetAmount(wizardry).Add(buff, AmountModifier.Raw(i));
+                block.GetAmount(wizardry).Add(_buff, AmountModifier.Raw(i));
                 block.Calculate();
             }
 
-            Assert.AreEqual(original, derivation.modifier);
+            Assert.AreEqual(original, derivation.Modifier);
             Assert.AreEqual((Amount)((3 + 99) * 5), block.Get(maxMana));
         }
 

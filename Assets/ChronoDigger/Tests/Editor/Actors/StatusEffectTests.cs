@@ -1,9 +1,8 @@
 using ChronoDigger.Combat;
-using ChronoDigger.Tests.Stats;
 using Marple.Core;
 using NUnit.Framework;
 
-namespace ChronoDigger.Tests.Actors {
+namespace ChronoDigger.Tests {
     public class StatusEffectTests {
         [Test]
         public void ApplyToStatBlock_RawModifier_ChangesStat() {
@@ -48,8 +47,8 @@ namespace ChronoDigger.Tests.Actors {
             var armor = TestStats.Create("Armor", 10);
             var block = new StatBlock(TestStats.Profile());
             var definition = TestStats.StatusEffect((armor, AmountModifier.Raw(5)));
-            definition.stacksMultiplyModifiers = true;
-            definition.maxStacks = 5;
+            definition.StacksMultiplyModifiers = true;
+            definition.MaxStacks = 5;
             var effect = new StatusEffect(definition);
             effect.AddStacks(3);
 
@@ -63,7 +62,7 @@ namespace ChronoDigger.Tests.Actors {
             var armor = TestStats.Create("Armor", 10);
             var block = new StatBlock(TestStats.Profile());
             var definition = TestStats.StatusEffect((armor, AmountModifier.Raw(5)));
-            definition.maxStacks = 5;
+            definition.MaxStacks = 5;
             var effect = new StatusEffect(definition);
             effect.AddStacks(3);
 
@@ -77,32 +76,32 @@ namespace ChronoDigger.Tests.Actors {
             var armor = TestStats.Create("Armor", 10);
             var block = new StatBlock(TestStats.Profile());
             var definition = TestStats.StatusEffect((armor, AmountModifier.Raw(5)));
-            definition.stacksMultiplyModifiers = true;
-            definition.maxStacks = 5;
-            AmountModifier original = definition.statModifiers[0].modifier;
+            definition.StacksMultiplyModifiers = true;
+            definition.MaxStacks = 5;
+            AmountModifier original = definition.StatModifiers[0].Modifier;
             var effect = new StatusEffect(definition);
             effect.AddStacks(3);
 
             effect.ApplyToStatBlock(block);
 
-            Assert.AreEqual(original, definition.statModifiers[0].modifier);
+            Assert.AreEqual(original, definition.StatModifiers[0].Modifier);
         }
 
         [Test]
         public void AddStacks_AboveMax_ClampsToMax() {
             var definition = TestStats.StatusEffect();
-            definition.maxStacks = 3;
+            definition.MaxStacks = 3;
             var effect = new StatusEffect(definition);
 
             effect.AddStacks(5);
 
-            Assert.AreEqual(3, effect.stacks);
+            Assert.AreEqual(3, effect.Stacks);
         }
 
         [Test]
         public void IsExpired_IncrementedPastBaseTime_ReturnsTrue() {
             var definition = TestStats.StatusEffect();
-            definition.baseTime = 10;
+            definition.BaseTime = 10;
             var effect = new StatusEffect(definition);
 
             effect.Increment(9);

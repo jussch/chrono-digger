@@ -11,7 +11,7 @@ namespace Marple.Core {
     /// BigDouble by changing only this file.
     /// </summary>
     public readonly struct Amount : IEquatable<Amount>, IComparable<Amount>, IComparable {
-        private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
+        private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
 
         private readonly double _value;
 
@@ -197,7 +197,7 @@ namespace Marple.Core {
         public override string ToString() => Format();
 
         /// <summary>Standard .NET numeric format string (e.g. "F1", "G3"), invariant culture.</summary>
-        public string ToString(string format) => _value.ToString(format, Culture);
+        public string ToString(string format) => _value.ToString(format, _culture);
 
         /// <summary>
         /// Player-facing text. Below the threshold: "12", "3.5", "45,210".
@@ -210,8 +210,8 @@ namespace Marple.Core {
             double abs = Math.Abs(_value);
 
             if (abs < scientificThreshold) {
-                if (abs >= 1000d) return Math.Truncate(_value).ToString("N0", Culture);
-                return _value.ToString("0.##", Culture);
+                if (abs >= 1000d) return Math.Truncate(_value).ToString("N0", _culture);
+                return _value.ToString("0.##", _culture);
             }
 
             int decimals = Math.Max(0, significantDigits - 1);
@@ -224,7 +224,7 @@ namespace Marple.Core {
                 exponent++;
             }
 
-            return mantissa.ToString("F" + decimals, Culture) + "e" + exponent.ToString(Culture);
+            return mantissa.ToString("F" + decimals, _culture) + "e" + exponent.ToString(_culture);
         }
 
         // Todo: Fill out later.
@@ -238,13 +238,13 @@ namespace Marple.Core {
 
         // Saved as a string, not a double, so the save format survives a BigDouble port.
 
-        public string ToSaveString() => _value.ToString("R", Culture);
+        public string ToSaveString() => _value.ToString("R", _culture);
 
         public static Amount Parse(string s) =>
-            new Amount(double.Parse(s, NumberStyles.Float, Culture));
+            new Amount(double.Parse(s, NumberStyles.Float, _culture));
 
         public static bool TryParse(string s, out Amount result) {
-            if (double.TryParse(s, NumberStyles.Float, Culture, out double parsed) && IsValid(parsed)) {
+            if (double.TryParse(s, NumberStyles.Float, _culture, out double parsed) && IsValid(parsed)) {
                 result = new Amount(parsed);
                 return true;
             }

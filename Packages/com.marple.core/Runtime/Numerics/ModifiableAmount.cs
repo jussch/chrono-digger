@@ -6,14 +6,14 @@ using System.Linq;
 namespace Marple.Core {
     [Serializable]
     public class ModifiableAmount : AmountModifierRecord {
-        public double baseValue;
+        public double BaseValue;
 
         [NonSerialized]
-        private Amount calculatedValue;
+        private Amount _calculatedValue;
 
-        public string calculatedValueReadable => Utils.BeautifyNumber(GetValue(), Utils.BeautifySettings.WithSpace(false));
+        public string CalculatedValueReadable => Utils.BeautifyNumber(GetValue(), Utils.BeautifySettings.WithSpace(false));
 
-        private bool calculationDirty = true;
+        private bool _calculationDirty = true;
 
         // public static implicit operator double(ModifiableAmount record) => record.GetValue().ToDouble();
         public static implicit operator Amount(ModifiableAmount record) => record.GetValue();
@@ -55,41 +55,41 @@ namespace Marple.Core {
         // public static bool operator >=(ModifiableAmount left, double right) => left.GetValue() >= right;
 
         public ModifiableAmount(double baseValueN) {
-            baseValue = baseValueN;
-            calculatedValue = baseValueN;
+            BaseValue = baseValueN;
+            _calculatedValue = baseValueN;
         }
 
         public Amount GetValue() {
-            if (calculationDirty) Calculate();
-            return calculatedValue;
+            if (_calculationDirty) Calculate();
+            return _calculatedValue;
         }
 
         public ModifiableAmount SetBase(Amount val) {
-            baseValue = val.ToDouble();
+            BaseValue = val.ToDouble();
             Calculate();
             return this;
         }
 
         public ModifiableAmount SetBaseCalc(Amount val) {
-            Add(this, AmountModifier.Raw(val - baseValue).SetOrder(-2));
+            Add(this, AmountModifier.Raw(val - BaseValue).SetOrder(-2));
             return this;
         }
 
         protected override void MakeDirty() {
             base.MakeDirty();
-            calculationDirty = true;
+            _calculationDirty = true;
         }
 
         public void Calculate() {
-            Amount newValue = Adjust(baseValue);
-            // if ((newValue - calculatedValue).Abs() > 0.001d) UpdateObservable();
-            if (!Utils.ApproxError(newValue, calculatedValue)) UpdateObservable();
-            calculatedValue = newValue;
-            calculationDirty = false;
+            Amount newValue = Adjust(BaseValue);
+            // if ((newValue - _calculatedValue).Abs() > 0.001d) UpdateObservable();
+            if (!Utils.ApproxError(newValue, _calculatedValue)) UpdateObservable();
+            _calculatedValue = newValue;
+            _calculationDirty = false;
         }
 
         public void Load(ModifiableAmount otherRecord) {
-            modifiers = otherRecord.modifiers ?? new Dictionary<AmountModifierKey, Entry>();
+            Modifiers = otherRecord.Modifiers ?? new Dictionary<AmountModifierKey, Entry>();
             Calculate();
         }
 
@@ -97,9 +97,9 @@ namespace Marple.Core {
             return AmountModifier.Stacking((GetValue() - 100) / 100);
         }
 
-        public Amount GetDiff(AmountModifierKey key, AmountModifier newMod) => GetDiff(baseValue, key, newMod);
+        public Amount GetDiff(AmountModifierKey key, AmountModifier newMod) => GetDiff(BaseValue, key, newMod);
 
-        public bool IsChanged() => baseValue != calculatedValue;
+        public bool IsChanged() => BaseValue != _calculatedValue;
         
         public int ToInt() => GetValue().ToInt();
         public Amount ToAmount() => GetValue();
@@ -107,7 +107,7 @@ namespace Marple.Core {
         public Amount AsPercent() => GetValue().AsPercent();
 
         public string AsReadable(string suffix = "") {
-            return Utils.BeautifyNumber(GetValue()) + suffix + " (" + AsReadableStringBonus(true, baseValue) + ")";
+            return Utils.BeautifyNumber(GetValue()) + suffix + " (" + AsReadableStringBonus(true, BaseValue) + ")";
         }
 
         public string AsMiniReadablePercent(string suffix = "") {
@@ -118,6 +118,6 @@ namespace Marple.Core {
             return AsReadable("%" + suffix);
         }
 
-        public new static ModifiableAmount empty = new ModifiableAmount(0);
+        public new static ModifiableAmount Empty = new ModifiableAmount(0);
     }
 }

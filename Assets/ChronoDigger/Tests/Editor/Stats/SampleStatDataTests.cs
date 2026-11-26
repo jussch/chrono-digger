@@ -2,7 +2,7 @@ using ChronoDigger.Combat;
 using Marple.Core;
 using NUnit.Framework;
 
-namespace ChronoDigger.Tests.Stats {
+namespace ChronoDigger.Tests {
     public class SampleStatDataTests {
         [TearDown]
         public void ResetCoreStats() => CoreStats.SetInstance(null);
@@ -12,7 +12,7 @@ namespace ChronoDigger.Tests.Stats {
             var block = new StatBlock(SampleStatData.GoblinShaman);
             block.Calculate();
 
-            Amount expected = SampleStatData.MaxMana.defaultValue + 3 * SampleStatData.ManaPerWizardry;
+            Amount expected = SampleStatData.MaxMana.DefaultValue + 3 * SampleStatData.ManaPerWizardry;
             Assert.AreEqual(expected, block.Get(Stat.MaxMana));
         }
 
@@ -32,7 +32,7 @@ namespace ChronoDigger.Tests.Stats {
 
         [Test]
         public void Fire_IsResistedByFireResistance() {
-            Assert.AreSame(SampleStatData.FireResistance, SampleStatData.Fire.resistanceStat);
+            Assert.AreSame(SampleStatData.FireResistance, SampleStatData.Fire.ResistanceStat);
         }
     }
 }

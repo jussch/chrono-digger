@@ -7,13 +7,13 @@ using System.Security;
 namespace Marple.Core {
         
     public static class Utils { 
-        private static readonly Random Rng = new Random();
+        private static readonly Random _rng = new Random();
 
-        private static readonly List<string> CompactCategories = new List<string> {
+        private static readonly List<string> _compactCategories = new List<string> {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
         };
-        private static readonly List<string> NumberCategories = new List<string> {
+        private static readonly List<string> _numberCategories = new List<string> {
             "K",
             "M",
             "B",
@@ -56,7 +56,7 @@ namespace Marple.Core {
             "NoTr",
             "DcTr",
         };
-        private static readonly List<string> ReverseNumberCategories = new List<string> {
+        private static readonly List<string> _reverseNumberCategories = new List<string> {
             "m", "u", "n", "p", "f", "a", "z", "y", "r", "q",
         };
 
@@ -68,19 +68,19 @@ namespace Marple.Core {
             Engineering
         }
         public struct BeautifySettings {
-            public Amount accuracy;
-            public bool space;
-            public BeautifyType type;
+            public Amount Accuracy;
+            public bool Space;
+            public BeautifyType Type;
 
             public static BeautifySettings Default = new BeautifySettings() {
-                accuracy = 0,
-                space = true,
-                type = BeautifyType.Named,
+                Accuracy = 0,
+                Space = true,
+                Type = BeautifyType.Named,
             };
 
             public static BeautifySettings WithSpace(bool space) {
                 var settings = Default;
-                settings.space = space;
+                settings.Space = space;
                 return settings;
             }
         }
@@ -94,9 +94,9 @@ namespace Marple.Core {
         public static string BeautifyNumber(Amount number, BeautifySettings settings) {
             if (number < 0) return "-" + BeautifyNumber(number.Abs(), settings);
             if (number == 0) return "0";
-            if (settings.accuracy != 0 &&
-                number > settings.accuracy && 
-                number < (settings.accuracy + 0.1) && 
+            if (settings.Accuracy != 0 &&
+                number > settings.Accuracy && 
+                number < (settings.Accuracy + 0.1) && 
                 HasDecimals(number.ToDouble() * 100)) {
                     return ToDecimalPlace(number.ToDouble(), 3);         
             }
@@ -104,13 +104,13 @@ namespace Marple.Core {
         }
 
         private static string BeautifyNumberSwitch(Amount number, BeautifySettings settings) {
-            switch (settings.type) {
+            switch (settings.Type) {
                 case BeautifyType.Named: return BeautifyNumberNamed(number, settings);
                 case BeautifyType.Compact: return BeautifyNumberCompact(number, settings);
                 case BeautifyType.CompactNum: return BeautifyNumberCompactNumerical(number, settings);
                 case BeautifyType.Scientific: return BeautifyNumberScientific(number, settings);
                 case BeautifyType.Engineering: return BeautifyNumberEngineering(number, settings);
-                default: throw new ArgumentOutOfRangeException("Invalid NumberDisplayOption: " + settings.type);
+                default: throw new ArgumentOutOfRangeException("Invalid NumberDisplayOption: " + settings.Type);
             }
         }
         
@@ -118,13 +118,13 @@ namespace Marple.Core {
             var (roundedString, categoryIndex, inverted) = BeautifyNumberThirds(number);
 
             // var categoryArray = inverted ? ReverseNumberCategories : NumberCategories;
-            var categoryArray = NumberCategories;
+            var categoryArray = _numberCategories;
             
             if (categoryIndex < 0) return roundedString;
             if (categoryIndex >= categoryArray.Count) return roundedString + "e" + (inverted ? "-" : "") + ((categoryIndex + 1) * 3);
             
             string symbol = categoryArray.ElementAt((int)categoryIndex);
-            return roundedString + (settings.space ? "<space=0.1em>" : "") + (inverted ? "-" : "") + symbol;
+            return roundedString + (settings.Space ? "<space=0.1em>" : "") + (inverted ? "-" : "") + symbol;
         }
     
         public static string BeautifyNumberCompact(Amount number, BeautifySettings settings) {
@@ -134,7 +134,7 @@ namespace Marple.Core {
 
             string symbol = GetCompactLetter(categoryIndex + 1);
 
-            return roundedString + (settings.space ? "<space=0.1em>" : "") + (inverted ? "-" : "") + symbol;
+            return roundedString + (settings.Space ? "<space=0.1em>" : "") + (inverted ? "-" : "") + symbol;
         }
     
         public static string BeautifyNumberCompactNumerical(Amount number, BeautifySettings settings) {
@@ -146,7 +146,7 @@ namespace Marple.Core {
             long letterIndex = ((categoryIndex + 1) / 100) + 1;
             string symbol = $"{GetCompactLetter(letterIndex).ToLower()}{val}";
 
-            return roundedString + (settings.space ? "<space=0.1em>" : "") + (inverted ? "-" : "") + symbol;
+            return roundedString + (settings.Space ? "<space=0.1em>" : "") + (inverted ? "-" : "") + symbol;
         }
 
         public static (string, long, bool) BeautifyNumberThirds(Amount number) {
@@ -282,10 +282,10 @@ namespace Marple.Core {
             return string.Join(":", list.SkipWhile(val => val < 1).Select(val => val.ToString().PadLeft(2, '0')));
         }
 
-        private static readonly List<string> QuickRoman = new List<string>
+        private static readonly List<string> _quickRoman = new List<string>
             { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
         public static string BeautifyRoman(int value) {
-            if (value >= 0 && value < QuickRoman.Count) return QuickRoman[value];
+            if (value >= 0 && value < _quickRoman.Count) return _quickRoman[value];
             return ToRoman(value);
         }
         
@@ -395,14 +395,14 @@ namespace Marple.Core {
             string symbol = "";
             if (index <= 0) return symbol;
             
-            int compactSize = CompactCategories.Count;
+            int compactSize = _compactCategories.Count;
             int maxIterations = 50;
             long currIndex = index;
             while (currIndex >= 1 && maxIterations > 0) {
                 maxIterations -= 1;
                 int currDigit = (int)((currIndex - 1) % compactSize);
                 currIndex = (currIndex - currDigit) / compactSize;
-                symbol = CompactCategories[currDigit] + symbol;
+                symbol = _compactCategories[currDigit] + symbol;
             }
 
             return symbol;
@@ -656,8 +656,8 @@ namespace Marple.Core {
 
         public static int GetRandomIndexRemoved(int count, int removeIndex) {
             if (count <= 1) return 0;
-            if (removeIndex < 0) return Rng.Next(0, count);
-            var rawIndex = Rng.Next(0, count - 1);
+            if (removeIndex < 0) return _rng.Next(0, count);
+            var rawIndex = _rng.Next(0, count - 1);
 
             return rawIndex >= removeIndex ? rawIndex + 1 : rawIndex;
         }
@@ -702,7 +702,7 @@ namespace Marple.Core {
             if (weights.Count == 1) return 0;
             
             var total = weights.Aggregate((sum, weight) => sum + weight);
-            var chosenWeight = (float)(Rng.NextDouble() * total);
+            var chosenWeight = (float)(_rng.NextDouble() * total);
             var iteratedWeight = chosenWeight;
             for (var index = 0; index < weights.Count; index++) {
                 var weight = weights[index];
@@ -726,7 +726,7 @@ namespace Marple.Core {
         }
         
         public static T Sample<T>(List<T> elements) {
-            return elements[Rng.Next(0, elements.Count - 1)];
+            return elements[_rng.Next(0, elements.Count - 1)];
         }
         
         public static IEnumerable<T> SampleSize<T>(IEnumerable<T> elements, int sampleSize) {

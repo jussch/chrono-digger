@@ -6,7 +6,7 @@ using System.Linq;
 namespace Marple.Core {
     [Serializable]
     public class MergingModifierRecord : AmountModifierRecord {
-        protected List<MergeEntry> entries = new List<MergeEntry>();
+        protected List<MergeEntry> Entries = new List<MergeEntry>();
 
         private static int Return0() => 0;
         private static Amount Return1() => 1;
@@ -21,11 +21,11 @@ namespace Marple.Core {
         public MergeEntry AddRecord(AmountModifierRecord record, Func<Amount> recordMod, Func<Amount> expMod, Func<int> orderAdjust) => AddRecord(record, recordMod, expMod, ReturnTrue, orderAdjust);
         public MergeEntry AddRecord(AmountModifierRecord record, Func<Amount> recordMod, Func<Amount> expMod, Func<bool> condition, Func<int> orderAdjust) {
             var entry = new MergeEntry(record, recordMod, expMod, condition, orderAdjust);
-            entries.Add(entry);
+            Entries.Add(entry);
 
-            if (entry.condition()) {
-                foreach (var pair in modifiers) {
-                    entry.record.Add(pair.Key, pair.Value.WithModifier(entry.GetMod(pair.Value.Modifier)));
+            if (entry.Condition()) {
+                foreach (var pair in Modifiers) {
+                    entry.Record.Add(pair.Key, pair.Value.WithModifier(entry.GetMod(pair.Value.Modifier)));
                 }
             }
 
@@ -33,35 +33,35 @@ namespace Marple.Core {
         }
 
         public void RemoveRecord(AmountModifierRecord record) {
-            var entry = entries.Find(ent => ent.record == record);
+            var entry = Entries.Find(ent => ent.Record == record);
             if (entry == null) return;
-            entries.Remove(entry);
+            Entries.Remove(entry);
         }
 
         public override void Add(AmountModifierKey key, Entry modifierEntry) {
             base.Add(key, modifierEntry);
-            foreach (var entry in entries) {
-                if (!entry.condition()) continue;
-                entry.wasActive = true;
-                entry.record.Add(key, modifierEntry.WithModifier(entry.GetMod(modifierEntry.Modifier)));
+            foreach (var entry in Entries) {
+                if (!entry.Condition()) continue;
+                entry.WasActive = true;
+                entry.Record.Add(key, modifierEntry.WithModifier(entry.GetMod(modifierEntry.Modifier)));
             }
         }
 
         public override void Remove(AmountModifierKey key) {
             base.Remove(key);
-            foreach (var entry in entries) {
-                if (!entry.condition()) continue;
-                entry.wasActive = true;
-                entry.record.Remove(key);
+            foreach (var entry in Entries) {
+                if (!entry.Condition()) continue;
+                entry.WasActive = true;
+                entry.Record.Remove(key);
             }
         }
 
         public void RecheckMods() {
-            foreach (var entry in entries) {
-                if (!entry.wasActive && entry.condition()) {
-                    entry.wasActive = true;
-                    foreach (var pair in modifiers) {
-                        entry.record.Add(pair.Key, pair.Value.WithModifier(entry.GetMod(pair.Value.Modifier)));
+            foreach (var entry in Entries) {
+                if (!entry.WasActive && entry.Condition()) {
+                    entry.WasActive = true;
+                    foreach (var pair in Modifiers) {
+                        entry.Record.Add(pair.Key, pair.Value.WithModifier(entry.GetMod(pair.Value.Modifier)));
                     }
                 }
             }
@@ -69,7 +69,7 @@ namespace Marple.Core {
 
         public override void Clear() {
             base.Clear();
-            entries = new List<MergeEntry>();
+            Entries = new List<MergeEntry>();
         }
 
         public Amount GetDiff(AmountModifierKey key, AmountModifier newMod) => GetDiff(0, key, newMod);
@@ -78,28 +78,28 @@ namespace Marple.Core {
          * Subclass
          */
         public class MergeEntry {
-            public readonly AmountModifierRecord record;
-            public readonly Func<Amount> mod;
-            public readonly Func<Amount> expMod;
-            public readonly Func<bool> condition;
-            public readonly Func<int> orderAdjust;
-            public bool wasActive;
+            public readonly AmountModifierRecord Record;
+            public readonly Func<Amount> Mod;
+            public readonly Func<Amount> ExpMod;
+            public readonly Func<bool> Condition;
+            public readonly Func<int> OrderAdjust;
+            public bool WasActive;
 
             public MergeEntry(AmountModifierRecord record, Func<Amount> mod, Func<Amount> expMod, Func<bool> condition, Func<int> orderAdjust) {
-                this.record = record;
-                this.mod = mod;
-                this.expMod = expMod;
-                this.condition = condition;
-                this.orderAdjust = orderAdjust;
-                wasActive = this.condition();
+                this.Record = record;
+                this.Mod = mod;
+                this.ExpMod = expMod;
+                this.Condition = condition;
+                this.OrderAdjust = orderAdjust;
+                WasActive = this.Condition();
             }
 
             // public AmountModifier GetMod(AmountModifier inMod) => inMod.MultiplyScalar(mod);
             public AmountModifier GetMod(AmountModifier inMod) => inMod.Type == AmountModifier.AmountModifierType.MultiStacking || inMod.Order > 0
-                ? inMod.PowerScalar(expMod()).AdjustOrder(orderAdjust())
-                : inMod.PowerScalar(expMod()).MultiplyScalar(mod()).AdjustOrder(orderAdjust());
+                ? inMod.PowerScalar(ExpMod()).AdjustOrder(OrderAdjust())
+                : inMod.PowerScalar(ExpMod()).MultiplyScalar(Mod()).AdjustOrder(OrderAdjust());
 
-            public string Print() => $"mod: {mod()}, expMod: {expMod()}, condition: {condition()}, orderAdjust: {orderAdjust()}";
+            public string Print() => $"mod: {Mod()}, expMod: {ExpMod()}, condition: {Condition()}, orderAdjust: {OrderAdjust()}";
         }
     }
 }

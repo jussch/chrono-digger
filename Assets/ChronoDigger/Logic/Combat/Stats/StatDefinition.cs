@@ -8,19 +8,17 @@ namespace ChronoDigger.Combat {
     /// </summary>
     // [CreateAssetMenu(menuName = "Combat/Stat Definition")]
     public class StatDefinition /* : ScriptableObject */ : IDescribable {
-        public string displayName;
-        public string description;
-        public double defaultValue;
-        public StatCategory category;
+        // [field: SerializeField] on these two in Unity: they're auto-properties because IDescribable needs properties.
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public double DefaultValue;
+        public StatCategory Category;
 
         // Odin: [ValidateInput(nameof(HasNoCycle), "Derivations form a cycle")]
-        public List<StatModifier> derivations = new List<StatModifier>();
-
-        public string DisplayName => displayName;
-        public string Description => description;
+        public List<StatModifier> Derivations = new List<StatModifier>();
 
         // private bool HasNoCycle(List<StatModifier> _) => StatDerivationValidator.FindCycle(this) == null;
 
-        public override string ToString() => displayName;
+        public override string ToString() => DisplayName;
     }
 }

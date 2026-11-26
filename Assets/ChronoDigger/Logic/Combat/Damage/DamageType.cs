@@ -1,9 +1,9 @@
 namespace ChronoDigger.Combat {
     // [CreateAssetMenu(menuName = "Combat/Damage Type")]
     public class DamageType /* : ScriptableObject */ {
-        public string displayName;
-        public StatDefinition resistanceStat;
+        public string DisplayName;
+        public StatDefinition ResistanceStat;
 
-        public override string ToString() => displayName;
+        public override string ToString() => DisplayName;
     }
 }

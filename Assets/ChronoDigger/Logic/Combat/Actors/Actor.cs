@@ -1,17 +1,28 @@
 using System;
+using System.Collections.Generic;
 using Marple.Core;
 
 namespace ChronoDigger.Combat {
     public class Actor {
-        public ActorState state;
-        public StatBlock statBlock;
+        public StatBlock Stats { get; private set; }
+        public GridPos Position { get; set; }
+        public ActionSet Actions { get; } = new ActionSet();
+        /// <summary>Null when idle. Set and cleared only by <see cref="ActionRules"/>.</summary>
+        public Intent CurrentIntent { get; internal set; }
+
+        private ActorState _state;
+
+        public int Health => _state.Health;
+        public int Mana => _state.Mana;
+        public int Block => _state.Block;
+        public IReadOnlyList<StatusEffect> StatusEffects => _state.StatusEffects;
 
         public void LoadStatBlock(StatProfile profile) {
-            statBlock = new StatBlock(profile);
+            Stats = new StatBlock(profile);
         }
 
         public void Initiate() {
-            state = new ActorState(statBlock);
+            _state = new ActorState(Stats);
         }
 
         public void Increment(int time) {
@@ -24,42 +35,43 @@ namespace ChronoDigger.Combat {
          **/
         public void GainHealth(int health) {
             if (health <= 0) return;
-            state.health = Math.Min(state.health + health, statBlock.Get(Stat.MaxHealth).ToInt());
+            _state.Health = Math.Min(_state.Health + health, Stats.Get(Stat.MaxHealth).ToInt());
         }
 
-        public void LoseHealth(int healthLoss) {
-            if (healthLoss <= 0) return;
-            state.health = Math.Max(state.health - healthLoss, 0);
+        public void LoseHealth(int health) {
+            if (health <= 0) return;
+            _state.Health = Math.Max(_state.Health - health, 0);
         }
 
         public void GainMana(int mana) {
             if (mana <= 0) return;
-            state.mana = Math.Min(state.mana + mana, statBlock.Get(Stat.MaxMana).ToInt());
+            _state.Mana = Math.Min(_state.Mana + mana, Stats.Get(Stat.MaxMana).ToInt());
         }
 
-        public void LoseMana(int manaLoss) {
-            if (manaLoss <= 0) return;
-            state.mana = Math.Max(state.mana - manaLoss, 0);
+        public void LoseMana(int mana) {
+            if (mana <= 0) return;
+            _state.Mana = Math.Max(_state.Mana - mana, 0);
         }
 
         public void GainBlock(int block) {
             if (block <= 0) return;
-            state.block += block;
+            _state.Block += block;
         }
 
-        public void LoseBlock(int blockLoss) {
-            if (blockLoss <= 0) return;
-            state.block = Math.Max(state.block - blockLoss, 0);
+        public void LoseBlock(int block) {
+            if (block <= 0) return;
+            _state.Block = Math.Max(_state.Block - block, 0);
         }
 
         public void TakeDamage(DamageInfo damageInfo) {
-            Amount damage = ProcessIncomingDamage(damageInfo.value, damageInfo);
+            Amount damage = ProcessIncomingDamage(damageInfo.Value, damageInfo);
             ApplyDamage(damage.ToInt(), damageInfo);
         }
 
         private Amount ProcessIncomingDamage(Amount damage, DamageInfo damageInfo) {
-            if (!damageInfo.HasFlags(DamageFlags.IgnoreResistances) && damageInfo.type != null) {
+            if (!damageInfo.HasFlags(DamageFlags.IgnoreResistances) && damageInfo.Type != null) {
                 // Process resistance math
+                damage = DamageMath.ApplyResistance(damage, Stats.Get(damageInfo.Type.ResistanceStat));
             }
 
             return damage;
@@ -67,13 +79,13 @@ namespace ChronoDigger.Combat {
 
         // Takes final processed damage
         private void ApplyDamage(int damage, DamageInfo damageInfo) {
-            if (state.block > 0 && !damageInfo.HasFlags(DamageFlags.IgnoreBlock)) {
-                if (state.block >= damage) {
+            if (_state.Block > 0 && !damageInfo.HasFlags(DamageFlags.IgnoreBlock)) {
+                if (_state.Block >= damage) {
                     LoseBlock(damage);
                     damage = 0;
                 } else {
-                    damage -= state.block;
-                    LoseBlock(state.block);
+                    damage -= _state.Block;
+                    LoseBlock(_state.Block);
                 }
             }
 
@@ -84,16 +96,16 @@ namespace ChronoDigger.Combat {
          * Self State Management
          */
         public void IncrementActorState(int time) {
-            state.healthRegenCycle -= time;
-            if (state.healthRegenCycle <= 0) {
-                GainHealth(statBlock.Get(Stat.HealthRegen).ToInt());
-                state.healthRegenCycle += statBlock.Get(Stat.HealthRegenTime).ToInt();
+            _state.HealthRegenCycle -= time;
+            if (_state.HealthRegenCycle <= 0) {
+                GainHealth(Stats.Get(Stat.HealthRegen).ToInt());
+                _state.HealthRegenCycle += Stats.Get(Stat.HealthRegenTime).ToInt();
             }
 
-            state.manaRegenCycle -= time;
-            if (state.manaRegenCycle <= 0) {
-                GainMana(statBlock.Get(Stat.ManaRegen).ToInt());
-                state.manaRegenCycle += statBlock.Get(Stat.ManaRegenTime).ToInt();
+            _state.ManaRegenCycle -= time;
+            if (_state.ManaRegenCycle <= 0) {
+                GainMana(Stats.Get(Stat.ManaRegen).ToInt());
+                _state.ManaRegenCycle += Stats.Get(Stat.ManaRegenTime).ToInt();
             }
         }
 
@@ -101,25 +113,25 @@ namespace ChronoDigger.Combat {
          * Status Effects
          **/
         public void AddStatusEffect(StatusEffect statusEffect) {
-            var existing = state.statusEffects.Find(se => se.definition == statusEffect.definition);
+            var existing = _state.StatusEffects.Find(se => se.Definition == statusEffect.Definition);
             if (existing != null) {
-                existing.AddStacks(statusEffect.stacks);
+                existing.AddStacks(statusEffect.Stacks);
                 existing.Reload();
-                existing.ApplyToStatBlock(statBlock);
+                existing.ApplyToStatBlock(Stats);
             } else {
-                state.statusEffects.Add(statusEffect);
-                statusEffect.ApplyToStatBlock(statBlock);
+                _state.StatusEffects.Add(statusEffect);
+                statusEffect.ApplyToStatBlock(Stats);
             }
         }
 
         public void RemoveStatusEffect(StatusEffect statusEffect) {
-            state.statusEffects.Remove(statusEffect);
-            statusEffect.RemoveFromStatBlock(statBlock);
+            _state.StatusEffects.Remove(statusEffect);
+            statusEffect.RemoveFromStatBlock(Stats);
         }
 
         public void IncrementStatusEffects(int time) {
-            for (int i = state.statusEffects.Count - 1; i >= 0; i--) {
-                var statusEffect = state.statusEffects[i];
+            for (int i = _state.StatusEffects.Count - 1; i >= 0; i--) {
+                var statusEffect = _state.StatusEffects[i];
                 statusEffect.Increment(time);
                 if (statusEffect.IsExpired()) RemoveStatusEffect(statusEffect);
             }

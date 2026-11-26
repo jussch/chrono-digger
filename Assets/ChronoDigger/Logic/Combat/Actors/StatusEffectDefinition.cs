@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 namespace ChronoDigger.Combat {
     public class StatusEffectDefinition /*: ScriptableObject */ {
-        public int maxStacks = 0;
-        public int baseTime = 10;
+        public int MaxStacks = 0;
+        public int BaseTime = 10;
 
-        public bool stacksMultiplyModifiers;
-        public List<StatModifier> statModifiers;
+        public bool StacksMultiplyModifiers;
+        public List<StatModifier> StatModifiers;
     }
 }

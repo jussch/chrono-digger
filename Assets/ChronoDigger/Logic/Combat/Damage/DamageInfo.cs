@@ -13,21 +13,21 @@ namespace ChronoDigger.Combat {
     /// For describing an instance of damage.
     /// </summary>
     public struct DamageInfo {
-        public Amount value;
-        public Actor source;
-        public DamageType type;
-        public DamageFlags flags;
+        public Amount Value;
+        public Actor Source;
+        public DamageType Type;
+        public DamageFlags Flags;
 
         public void AddFlags(DamageFlags flagsN) {
-            flags |= flagsN;
+            Flags |= flagsN;
         }
         
         public void RemoveFlags(DamageFlags flagsN) {
-            flags &= ~flagsN;
+            Flags &= ~flagsN;
         }
 
         public bool HasFlags(DamageFlags flagsN) {
-            return (flags & flagsN) == flagsN;
+            return (Flags & flagsN) == flagsN;
         }
     }
 }

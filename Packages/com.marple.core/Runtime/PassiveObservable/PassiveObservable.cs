@@ -5,18 +5,18 @@ using System.Linq;
 
 namespace Marple.Core {
     public class PassiveObservable : IPassiveObservable {
-        private int observedId;
+        private int _observedId;
 
         public int GetObservableId() {
-            return observedId;
+            return _observedId;
         }
 
         public void UpdateObservable() {
-            observedId += 1;
+            _observedId += 1;
         }
 
         public PassiveObservable() {
-            observedId = 0;
+            _observedId = 0;
         }
 
         /**
@@ -28,7 +28,7 @@ namespace Marple.Core {
         }
 
         public class Channel : IPassiveChannel {
-            private Dictionary<string, PassiveObservable> dictionary = new Dictionary<string, PassiveObservable>();
+            private Dictionary<string, PassiveObservable> _dictionary = new Dictionary<string, PassiveObservable>();
 
             public Channel(params string[] names) {
                 Setup(names);
@@ -37,22 +37,22 @@ namespace Marple.Core {
             public void Setup(params string[] names) => Setup(names.ToList());
             public void Setup(IEnumerable<string> names) {
                 foreach (var name in names) {
-                    dictionary[name] = new PassiveObservable();
+                    _dictionary[name] = new PassiveObservable();
                 }
             }
 
             public Channel Conditional(params string[] names) => Conditional(names.ToList());
             public Channel Conditional(List<string> names) {
                 foreach (var name in names) {
-                    dictionary[name] = null;
+                    _dictionary[name] = null;
                 }
 
                 return this;
             }
 
             public IPassiveObservable Observe(string name) {
-                if (!dictionary.ContainsKey(name)) throw new ArgumentOutOfRangeException("Invalid PassiveObservable.Channel name: " + name);
-                return dictionary[name];
+                if (!_dictionary.ContainsKey(name)) throw new ArgumentOutOfRangeException("Invalid PassiveObservable.Channel name: " + name);
+                return _dictionary[name];
             }
 
             public IEnumerable<IPassiveObservable> ObserveAll(params string[] names) {
@@ -60,17 +60,17 @@ namespace Marple.Core {
             }
 
             public void Update(string name) {
-                if (!dictionary.ContainsKey(name)) throw new ArgumentOutOfRangeException("Invalid PassiveObservable.Channel name: " + name);
-                dictionary[name]?.UpdateObservable();
+                if (!_dictionary.ContainsKey(name)) throw new ArgumentOutOfRangeException("Invalid PassiveObservable.Channel name: " + name);
+                _dictionary[name]?.UpdateObservable();
             }
 
             public void Merge(IPassiveChannel other, string prefix) {
                 foreach (var keyValuePair in other.GetEntries()) {
-                    dictionary[prefix + keyValuePair.Key] = keyValuePair.Value;
+                    _dictionary[prefix + keyValuePair.Key] = keyValuePair.Value;
                 }
             }
 
-            public IEnumerable<KeyValuePair<string, PassiveObservable>> GetEntries() => dictionary.ToList();
+            public IEnumerable<KeyValuePair<string, PassiveObservable>> GetEntries() => _dictionary.ToList();
 
             public ObservingCache.Channel CreateObservingChannel() => new ObservingCache.Channel(this);
         }

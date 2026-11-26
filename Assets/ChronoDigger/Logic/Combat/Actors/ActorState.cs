@@ -5,20 +5,20 @@ using Marple.Core;
 namespace ChronoDigger.Combat {
     [Serializable]
     public class ActorState {
-        public int health;
-        public int healthRegenCycle;
-        public int mana;
-        public int manaRegenCycle;
-        public int block;
-        public int stamina;
+        public int Health;
+        public int HealthRegenCycle;
+        public int Mana;
+        public int ManaRegenCycle;
+        public int Block;
+        public int Stamina;
 
-        public List<StatusEffect> statusEffects = new List<StatusEffect>();
+        public List<StatusEffect> StatusEffects = new List<StatusEffect>();
 
         public ActorState(StatBlock statBlock) {
-            health = statBlock.Get(Stat.MaxHealth).ToInt();
-            mana = statBlock.Get(Stat.MaxMana).ToInt();
-            healthRegenCycle = statBlock.Get(Stat.HealthRegenTime).ToInt();
-            manaRegenCycle = statBlock.Get(Stat.ManaRegenTime).ToInt();
+            Health = statBlock.Get(Stat.MaxHealth).ToInt();
+            Mana = statBlock.Get(Stat.MaxMana).ToInt();
+            HealthRegenCycle = statBlock.Get(Stat.HealthRegenTime).ToInt();
+            ManaRegenCycle = statBlock.Get(Stat.ManaRegenTime).ToInt();
             // ...
         }
     }

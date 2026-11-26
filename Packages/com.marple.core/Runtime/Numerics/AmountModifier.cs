@@ -16,75 +16,75 @@ namespace Marple.Core {
 
         // [OnValueChanged("UpdateRealAdjust")]
         // [SerializeField]
-        private Amount adjust;
+        private Amount _adjust;
         
         // [OnValueChanged("UpdateRealAdjust")]
         // [SerializeField]
-        private AmountModifierType type;
+        private AmountModifierType _type;
 
         // [SerializeField]
-        private int order;
+        private int _order;
 
-        private Amount adjustReal;
+        private Amount _adjustReal;
 
-        public AmountModifierType Type => type;
-        public int Order => order;
+        public AmountModifierType Type => _type;
+        public int Order => _order;
 
         public AmountModifier(Amount adjustN, AmountModifierType typeN) {
-            adjust = adjustN.ToDouble();
-            adjustReal = adjustN;
-            type = typeN;
-            order = 0;
-            if (IsOneDefault()) adjust = adjustReal.ToDouble() - 1;
+            _adjust = adjustN.ToDouble();
+            _adjustReal = adjustN;
+            _type = typeN;
+            _order = 0;
+            if (IsOneDefault()) _adjust = _adjustReal.ToDouble() - 1;
         }
         
         public AmountModifier(AmountModifierType typeN) {
-            type = typeN;
-            adjustReal = Amount.Zero;
-            adjust = 0;
-            order = 0;
-            if (IsOneDefault()) adjustReal = Amount.One;
+            _type = typeN;
+            _adjustReal = Amount.Zero;
+            _adjust = 0;
+            _order = 0;
+            if (IsOneDefault()) _adjustReal = Amount.One;
             
         }
 
         public AmountModifier(AmountModifier amountModifier) {
-            type = amountModifier.type;
-            adjust = amountModifier.adjust;
-            adjustReal = amountModifier.adjustReal;
-            order = amountModifier.order;
+            _type = amountModifier._type;
+            _adjust = amountModifier._adjust;
+            _adjustReal = amountModifier._adjustReal;
+            _order = amountModifier._order;
         }
 
         public AmountModifier(AmountModifier amountModifier, Amount newValue) {
-            type = amountModifier.type;
-            adjust = newValue.ToDouble();
-            adjustReal = newValue;
-            order = amountModifier.order;
+            _type = amountModifier._type;
+            _adjust = newValue.ToDouble();
+            _adjustReal = newValue;
+            _order = amountModifier._order;
         }
 
         public static implicit operator string(AmountModifier mod) => mod.ToString();
         public static implicit operator bool(AmountModifier mod) => !mod.IsEmpty();
         
         public bool IsEmpty() {
-            switch (type) {
+            switch (_type) {
                 case AmountModifierType.MultiStacking: 
                 case AmountModifierType.Exponent: 
-                    // return Utils.Approx(adjustReal, 1); <-- This didn't allow for very small numbers.
-                    return adjustReal == 1;
+                    // return Utils.Approx(_adjustReal, 1); <-- This didn't allow for very small numbers.
+                    return _adjustReal == 1;
                 case AmountModifierType.Raw: 
                 case AmountModifierType.MultiDiminishing: 
                 case AmountModifierType.Reduction: 
-                    // return Utils.Approx(adjustReal, 0); <-- This didn't allow for very small numbers.
-                    return adjustReal == 0;
+                    // return Utils.Approx(_adjustReal, 0); <-- This didn't allow for very small numbers.
+                    return _adjustReal == 0;
                 default: return true;
             }
         }
 
         public bool IsNearZero() {
-            return adjustReal.Exponent < -5;
+            return _adjustReal.Exponent < -5;
         }
 
         public bool IsNaN() {
-            return adjustReal.IsNaN;
+            return _adjustReal.IsNaN;
         }
 
         // public int Adjust(int value) {
@@ -97,24 +97,24 @@ namespace Marple.Core {
 
         // public double Adjust(double value) => Adjust(new Amount(value)).ToDouble();
         public Amount Adjust(Amount value) {
-            switch (type) {
-                case AmountModifierType.Raw: return value + adjustReal;
-                case AmountModifierType.MultiDiminishing: return value * (1 + adjustReal);
-                case AmountModifierType.MultiStacking: return value * adjustReal;
-                case AmountModifierType.Reduction: return value / (1 + adjustReal);
-                case AmountModifierType.Exponent: return Amount.Pow(value, value > 0 && value < 1  ? adjustReal.Invert() : adjustReal);
+            switch (_type) {
+                case AmountModifierType.Raw: return value + _adjustReal;
+                case AmountModifierType.MultiDiminishing: return value * (1 + _adjustReal);
+                case AmountModifierType.MultiStacking: return value * _adjustReal;
+                case AmountModifierType.Reduction: return value / (1 + _adjustReal);
+                case AmountModifierType.Exponent: return Amount.Pow(value, value > 0 && value < 1  ? _adjustReal.Invert() : _adjustReal);
                 default: return value;
             }
         }
         
         public AmountModifier Adjust(AmountModifier modifier) {
-            switch (modifier.type) {
-                case AmountModifierType.MultiStacking: return new AmountModifier(modifier, modifier.adjustReal.Pow(Adjust(Amount.One)));
-                case AmountModifierType.Exponent: return new AmountModifier(modifier, modifier.adjustReal.Pow(Adjust(Amount.One)));
+            switch (modifier._type) {
+                case AmountModifierType.MultiStacking: return new AmountModifier(modifier, modifier._adjustReal.Pow(Adjust(Amount.One)));
+                case AmountModifierType.Exponent: return new AmountModifier(modifier, modifier._adjustReal.Pow(Adjust(Amount.One)));
                 case AmountModifierType.Raw:
                 case AmountModifierType.MultiDiminishing: 
                 case AmountModifierType.Reduction: 
-                    return new AmountModifier(modifier, Adjust(modifier.adjustReal));
+                    return new AmountModifier(modifier, Adjust(modifier._adjustReal));
                 default: return modifier;
             }
         }
@@ -125,10 +125,10 @@ namespace Marple.Core {
         public Amount SumSequenceAdjust(Amount value, Amount n) {
             if (n < 0) return 0;
             if (IsEmpty()) return value * (n+1);
-            switch (type) {
-                case AmountModifierType.Raw: return Utils.SumArithmeticSequenceDiff(value, adjustReal, n);
-                case AmountModifierType.MultiDiminishing: return Utils.SumArithmeticSequenceDiff(value, value * adjustReal, n);
-                case AmountModifierType.MultiStacking: return Utils.SumGeometricSequence(value, adjustReal, n);
+            switch (_type) {
+                case AmountModifierType.Raw: return Utils.SumArithmeticSequenceDiff(value, _adjustReal, n);
+                case AmountModifierType.MultiDiminishing: return Utils.SumArithmeticSequenceDiff(value, value * _adjustReal, n);
+                case AmountModifierType.MultiStacking: return Utils.SumGeometricSequence(value, _adjustReal, n);
                 case AmountModifierType.Reduction: throw new Exception("SequenceAdjust of Reduction modifiers not implemented.");
                 case AmountModifierType.Exponent: throw new Exception("SequenceAdjust of Exponent modifiers not implemented.");
                 default: return value;
@@ -136,14 +136,14 @@ namespace Marple.Core {
         }
 
         public AmountModifier SumSequenceAdjust(AmountModifier modifier, Amount n) {
-            switch (modifier.type) {
+            switch (modifier._type) {
                 case AmountModifierType.Raw:
                 case AmountModifierType.MultiDiminishing:
                 case AmountModifierType.Reduction:
-                    return new AmountModifier(modifier, SumSequenceAdjust(modifier.adjustReal, n));
+                    return new AmountModifier(modifier, SumSequenceAdjust(modifier._adjustReal, n));
                 case AmountModifierType.MultiStacking:
                 case AmountModifierType.Exponent:
-                    return new AmountModifier(modifier, modifier.adjustReal.Pow(SumSequenceAdjust(1, n)));
+                    return new AmountModifier(modifier, modifier._adjustReal.Pow(SumSequenceAdjust(1, n)));
                 default: return modifier;
             }
         }
@@ -153,10 +153,10 @@ namespace Marple.Core {
             if (IsEmpty()) return Amount.Max((sum / start) - startN, 0);
             Amount actualStart = startN <= 0 ? start : MultiplyScalar(startN).Adjust(start);
             if (sum < actualStart) return 0;
-            switch (type) {
-                case AmountModifierType.Raw: return Utils.FindArithmeticSequenceDiffN(sum, actualStart, adjustReal);
-                case AmountModifierType.MultiDiminishing: return Utils.FindArithmeticSequenceDiffN(sum, actualStart, start * adjustReal);
-                case AmountModifierType.MultiStacking: return Utils.FindGeometricSequenceN(sum, actualStart, adjustReal) + 1;
+            switch (_type) {
+                case AmountModifierType.Raw: return Utils.FindArithmeticSequenceDiffN(sum, actualStart, _adjustReal);
+                case AmountModifierType.MultiDiminishing: return Utils.FindArithmeticSequenceDiffN(sum, actualStart, start * _adjustReal);
+                case AmountModifierType.MultiStacking: return Utils.FindGeometricSequenceN(sum, actualStart, _adjustReal) + 1;
                 case AmountModifierType.Reduction: throw new Exception("FindSequenceN of Reduction modifiers not implemented.");
                 case AmountModifierType.Exponent: throw new Exception("FindSequenceN of Exponent modifiers not implemented.");
                 default: return sum / start;
@@ -181,43 +181,43 @@ namespace Marple.Core {
 
         public AmountModifier GetChange(AmountModifier modifier) {
             AmountModifier changed = Apply(modifier);
-            return new AmountModifier(this, changed.adjustReal - adjustReal);
+            return new AmountModifier(this, changed._adjustReal - _adjustReal);
         }
 
         public AmountModifier GetChange(AmountModifierRecord record, AmountModifier modifier) {
             AmountModifier changed = Apply(modifier);
-            return new AmountModifier(this, changed.adjustReal - adjustReal);
+            return new AmountModifier(this, changed._adjustReal - _adjustReal);
         }
 
         public AmountModifier AddModifier(AmountModifier modifier) {
-            switch (type) {
-                case AmountModifierType.Raw: return new AmountModifier(this, adjustReal + modifier.adjustReal);
-                case AmountModifierType.MultiDiminishing: return new AmountModifier(this, adjustReal + modifier.adjustReal);
-                case AmountModifierType.MultiStacking: return new AmountModifier(this, adjustReal * modifier.adjustReal);
-                case AmountModifierType.Reduction: return new AmountModifier(this, adjustReal + modifier.adjustReal);
-                case AmountModifierType.Exponent: return new AmountModifier(this, adjustReal * modifier.adjustReal);
+            switch (_type) {
+                case AmountModifierType.Raw: return new AmountModifier(this, _adjustReal + modifier._adjustReal);
+                case AmountModifierType.MultiDiminishing: return new AmountModifier(this, _adjustReal + modifier._adjustReal);
+                case AmountModifierType.MultiStacking: return new AmountModifier(this, _adjustReal * modifier._adjustReal);
+                case AmountModifierType.Reduction: return new AmountModifier(this, _adjustReal + modifier._adjustReal);
+                case AmountModifierType.Exponent: return new AmountModifier(this, _adjustReal * modifier._adjustReal);
                 default: return this;
             }
         }
 
         public readonly AmountModifier MultiplyScalar(Amount scalar) {
-            switch (type) {
-                case AmountModifierType.Raw: return new AmountModifier(this, adjustReal * scalar);
-                case AmountModifierType.MultiDiminishing: return new AmountModifier(this, adjustReal * scalar);
-                case AmountModifierType.MultiStacking: return new AmountModifier(this, adjustReal.Pow(scalar));
-                case AmountModifierType.Reduction: return new AmountModifier(this, adjustReal * scalar);
-                case AmountModifierType.Exponent: return new AmountModifier(this, adjustReal.Pow(scalar));
+            switch (_type) {
+                case AmountModifierType.Raw: return new AmountModifier(this, _adjustReal * scalar);
+                case AmountModifierType.MultiDiminishing: return new AmountModifier(this, _adjustReal * scalar);
+                case AmountModifierType.MultiStacking: return new AmountModifier(this, _adjustReal.Pow(scalar));
+                case AmountModifierType.Reduction: return new AmountModifier(this, _adjustReal * scalar);
+                case AmountModifierType.Exponent: return new AmountModifier(this, _adjustReal.Pow(scalar));
                 default: return this;
             }
         }
 
         public AmountModifier PowerScalar(Amount scalar) {
-            switch (type) {
-                case AmountModifierType.Raw: return new AmountModifier(this, Amount.Pow(adjustReal, scalar));
-                case AmountModifierType.MultiDiminishing: return new AmountModifier(this, Amount.Pow(adjustReal + 1, scalar) - 1);
-                case AmountModifierType.MultiStacking: return new AmountModifier(this, adjustReal.Pow(scalar));
-                case AmountModifierType.Reduction: return new AmountModifier(this, Amount.Pow(adjustReal + 1, scalar) - 1);
-                case AmountModifierType.Exponent: return new AmountModifier(this, adjustReal.Pow(scalar));
+            switch (_type) {
+                case AmountModifierType.Raw: return new AmountModifier(this, Amount.Pow(_adjustReal, scalar));
+                case AmountModifierType.MultiDiminishing: return new AmountModifier(this, Amount.Pow(_adjustReal + 1, scalar) - 1);
+                case AmountModifierType.MultiStacking: return new AmountModifier(this, _adjustReal.Pow(scalar));
+                case AmountModifierType.Reduction: return new AmountModifier(this, Amount.Pow(_adjustReal + 1, scalar) - 1);
+                case AmountModifierType.Exponent: return new AmountModifier(this, _adjustReal.Pow(scalar));
                 default: return this;
             }
         }
@@ -232,21 +232,21 @@ namespace Marple.Core {
         }
 
         public AmountModifier SetOrder(int orderN) {
-            return new AmountModifier(this) {order = orderN};
+            return new AmountModifier(this) {_order = orderN};
         }
 
         public AmountModifier AdjustOrder(int orderN) {
-            return SetOrder(orderN + order);
+            return SetOrder(orderN + _order);
         }
 
         public bool IsCompatible(AmountModifier modifier) {
-            return type == modifier.type && order == modifier.order;
+            return _type == modifier._type && _order == modifier._order;
         }
 
         public static List<AmountModifier> SortList(IEnumerable<AmountModifier> modifiers) {
             List<AmountModifier> newList = modifiers.Select(v => v).ToList();
             
-            newList.Sort((v1, v2) => v1.order.CompareTo(v2.order));
+            newList.Sort((v1, v2) => v1._order.CompareTo(v2._order));
             
             return newList;
         }
@@ -254,7 +254,7 @@ namespace Marple.Core {
         public static List<AmountModifier> SortListType(IEnumerable<AmountModifier> modifiers) {
             List<AmountModifier> newList = modifiers.Select(v => v).ToList();
             
-            newList.Sort((v1, v2) => Utils.SortCompare(v1.order.CompareTo(v2.order), v1.type.CompareTo(v2.type)));
+            newList.Sort((v1, v2) => Utils.SortCompare(v1._order.CompareTo(v2._order), v1._type.CompareTo(v2._type)));
             
             return newList;
         }
@@ -262,14 +262,14 @@ namespace Marple.Core {
         // Assumes same order
         public static List<AmountModifier> CombineSameOrderList(List<AmountModifier> modifiers) {
             if (modifiers.Count == 0) return new List<AmountModifier>();
-            var order = modifiers[0].order;
+            var order = modifiers[0]._order;
             AmountModifier rawModifier = new AmountModifier(AmountModifierType.Raw);
             AmountModifier bonusModifier = new AmountModifier(AmountModifierType.MultiDiminishing);
             AmountModifier multModifier = new AmountModifier(AmountModifierType.MultiStacking);
             AmountModifier redModifier = new AmountModifier(AmountModifierType.Reduction);
             AmountModifier expModifier = new AmountModifier(AmountModifierType.Exponent);
             foreach (AmountModifier modifier in modifiers) {
-                switch (modifier.type) {
+                switch (modifier._type) {
                     case AmountModifierType.Raw: rawModifier = rawModifier.AddModifier(modifier);
                         break;
                     case AmountModifierType.MultiDiminishing: bonusModifier = bonusModifier.AddModifier(modifier);
@@ -294,39 +294,39 @@ namespace Marple.Core {
         }
 
         public string ToStringValue(bool useSpace = true) {
-            switch (type) {
-                case AmountModifierType.Raw: return (adjustReal >= 0 ? "+" : "-") + Amount.Abs(adjustReal).Beautify();
-                case AmountModifierType.MultiDiminishing: return (adjustReal >= 0 ? "+" : "-") + Amount.Abs(adjustReal * 100).Beautify() + "%";
-                case AmountModifierType.MultiStacking: return  "x" + Amount.Abs(adjustReal).Beautify();
-                case AmountModifierType.Reduction: return  (adjustReal >= 0 ? "-" : "+") + Amount.Abs(100 * adjustReal).Beautify() + "%";
-                case AmountModifierType.Exponent: return  "^" + Amount.Abs(adjustReal).Beautify();
-                default: return adjustReal.ToString();
+            switch (_type) {
+                case AmountModifierType.Raw: return (_adjustReal >= 0 ? "+" : "-") + Amount.Abs(_adjustReal).Beautify();
+                case AmountModifierType.MultiDiminishing: return (_adjustReal >= 0 ? "+" : "-") + Amount.Abs(_adjustReal * 100).Beautify() + "%";
+                case AmountModifierType.MultiStacking: return  "x" + Amount.Abs(_adjustReal).Beautify();
+                case AmountModifierType.Reduction: return  (_adjustReal >= 0 ? "-" : "+") + Amount.Abs(100 * _adjustReal).Beautify() + "%";
+                case AmountModifierType.Exponent: return  "^" + Amount.Abs(_adjustReal).Beautify();
+                default: return _adjustReal.ToString();
             }
         }
         
         public string ToStringRaw(bool useSpace = true) {
             // if (IsEmpty()) return EmptyValue();
-            string orderString = GetOrderString(order);
+            string orderString = GetOrderString(_order);
             if (orderString != "") orderString = " " + orderString;
             return ToStringValue(useSpace) + orderString;
         }
 
         public string GetExportString() {
-            if (order == 0) return "";
-            var str = "-" + GetOrderString(order);
+            if (_order == 0) return "";
+            var str = "-" + GetOrderString(_order);
             // if (type == AmountModifierType.Raw) str += "-Val";
             return str;
         }
 
         private string EmptyValue() => IsOneDefault() ? "1" : "0";
-        public Amount GetRealAdjust() => adjustReal;
-        public long GetExponent() => adjustReal.Exponent;
-        public bool IsOneDefault() => type == AmountModifierType.MultiStacking || type == AmountModifierType.Exponent;
+        public Amount GetRealAdjust() => _adjustReal;
+        public long GetExponent() => _adjustReal.Exponent;
+        public bool IsOneDefault() => _type == AmountModifierType.MultiStacking || _type == AmountModifierType.Exponent;
 
         public bool Equals(AmountModifier modifier) {
-            return modifier.adjustReal == adjustReal &&
-                modifier.order == order && 
-                modifier.type == type;
+            return modifier._adjustReal == _adjustReal &&
+                modifier._order == _order && 
+                modifier._type == _type;
 
         }
         
@@ -375,10 +375,10 @@ namespace Marple.Core {
             List<List<AmountModifier>> sameOrderLists = new List<List<AmountModifier>>();
             List<AmountModifier> sorted = SortList(modifiers);
             List<AmountModifier> currentOrderList = new List<AmountModifier>();
-            int currentOrder = sorted.Count > 0 ? sorted[0].order : 0;
+            int currentOrder = sorted.Count > 0 ? sorted[0]._order : 0;
             for (int i = 0; i < sorted.Count; i++) {
                 AmountModifier current = sorted[i];
-                if (current.order == currentOrder) {
+                if (current._order == currentOrder) {
                     currentOrderList.Add(current);
                     continue;
                 }
@@ -387,7 +387,7 @@ namespace Marple.Core {
                 sameOrderLists.Add(reducedList);
 
                 currentOrderList = new List<AmountModifier>{current};
-                currentOrder = current.order;
+                currentOrder = current._order;
             }
 
             if (currentOrderList.Count > 0) {
@@ -409,7 +409,7 @@ namespace Marple.Core {
         /**
         * Creators
         */
-        public static AmountModifier empty = Raw(0);
+        public static AmountModifier Empty = Raw(0);
         public static AmountModifier Raw(Amount value) => new AmountModifier(value, AmountModifierType.Raw);
         public static AmountModifier Diminishing(Amount value) => new AmountModifier(value, AmountModifierType.MultiDiminishing);
         public static AmountModifier Stacking(Amount value) => new AmountModifier(value + 1, AmountModifierType.MultiStacking);

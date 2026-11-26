@@ -1,53 +1,53 @@
 using System;
 
 namespace ChronoDigger.Combat {
-    [Serializable]
     public class StatusEffect {
-        public int timeLeft;
-        public int timeTotal;
-        public int stacks;
+        public StatusEffectDefinition Definition { get; }
+        // Saving this will probably need an id reference rather than the Actor itself.
+        public Actor Source { get; }
+        public int TimeLeft { get; private set; }
+        public int TimeTotal { get; private set; }
+        public int Stacks { get; private set; }
 
-        // For this to be serializable, these probably have to be id references later.
-        public Actor source;
-        public StatusEffectDefinition definition;
-
-        public StatusEffect(StatusEffectDefinition definitionN, int stacksN = 0) {
-            definition = definitionN;
-            timeTotal = definition.baseTime;
-            timeLeft = definition.baseTime;
-            AddStacks(stacksN);
+        public StatusEffect(StatusEffectDefinition definition, int stacks = 0, Actor source = null) {
+            Definition = definition;
+            Source = source;
+            TimeTotal = definition.BaseTime;
+            TimeLeft = definition.BaseTime;
+            AddStacks(stacks);
         }
 
-        public void AddStacks(int stacksN) {
-            stacks = Math.Min(stacks + stacksN, definition.maxStacks);
+        /// <summary>Clamps at the definition's max stacks.</summary>
+        public void AddStacks(int stacks) {
+            Stacks = Math.Min(Stacks + stacks, Definition.MaxStacks);
         }
 
         public void Increment(int time) {
-            timeLeft -= time;
+            TimeLeft -= time;
         }
 
         public void Reload() {
-            timeTotal = definition.baseTime;
-            timeLeft = definition.baseTime;
+            TimeTotal = Definition.BaseTime;
+            TimeLeft = Definition.BaseTime;
         }
 
         public void ApplyToStatBlock(StatBlock statBlock) {
-            foreach (var statMod in definition.statModifiers) {
+            foreach (var statMod in Definition.StatModifiers) {
                 // TODO: These will need descriptors later.
-                if (definition.stacksMultiplyModifiers) {
-                    statMod.Retrieve(statBlock).Add(definition, statMod.modifier.MultiplyScalar(stacks));
+                if (Definition.StacksMultiplyModifiers) {
+                    statMod.Retrieve(statBlock).Add(Definition, statMod.Modifier.MultiplyScalar(Stacks));
                 } else {
-                    statMod.Retrieve(statBlock).Add(definition, statMod.modifier);
+                    statMod.Retrieve(statBlock).Add(Definition, statMod.Modifier);
                 }
             }
         }
 
         public void RemoveFromStatBlock(StatBlock statBlock) {
-            foreach (var statMod in definition.statModifiers) {
-                statMod.Retrieve(statBlock).Remove(definition);
+            foreach (var statMod in Definition.StatModifiers) {
+                statMod.Retrieve(statBlock).Remove(Definition);
             }
         }
 
-        public bool IsExpired() => timeLeft <= 0;
+        public bool IsExpired() => TimeLeft <= 0;
     }
 }

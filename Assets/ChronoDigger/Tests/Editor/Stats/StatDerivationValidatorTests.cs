@@ -2,7 +2,7 @@ using ChronoDigger.Combat;
 using Marple.Core;
 using NUnit.Framework;
 
-namespace ChronoDigger.Tests.Stats {
+namespace ChronoDigger.Tests {
     public class StatDerivationValidatorTests {
         [Test]
         public void FindCycle_AToBToA_ReturnsPath() {

@@ -22,9 +22,9 @@ namespace ChronoDigger.Combat {
             }
 
             path.Add(stat);
-            if (stat.derivations != null) {
-                foreach (var derivation in stat.derivations) {
-                    var cycle = Visit(derivation.stat, path, cleared);
+            if (stat.Derivations != null) {
+                foreach (var derivation in stat.Derivations) {
+                    var cycle = Visit(derivation.Stat, path, cleared);
                     if (cycle != null) return cycle;
                 }
             }

@@ -7,7 +7,7 @@ namespace Marple.Core {
     /// </summary>
     [Serializable]
     public struct TextState {
-        public TextStateType type;
+        public TextStateType Type;
 
         public enum TextStateType {
             None,
@@ -15,7 +15,7 @@ namespace Marple.Core {
         }
 
         public TextState(TextStateType typeN) {
-            type = typeN;
+            Type = typeN;
         }
 
         // public Color GetColor() {
@@ -26,7 +26,7 @@ namespace Marple.Core {
         //     }
         // }
 
-        public bool HasColor() => type != TextStateType.None;
+        public bool HasColor() => Type != TextStateType.None;
 
         // public string Apply(string text) {
         //     if (!HasColor()) return text;
@@ -34,12 +34,12 @@ namespace Marple.Core {
         //     return Utils.Colorize(text, GetColor());
         // }
 
-        public override string ToString() => type.ToString();
+        public override string ToString() => Type.ToString();
 
-        public static readonly TextState none = new TextState(TextStateType.None);
-        public static readonly TextState insufficient = new TextState(TextStateType.Insufficient);
+        public static readonly TextState None = new TextState(TextStateType.None);
+        public static readonly TextState Insufficient = new TextState(TextStateType.Insufficient);
 
-        public static TextState Cond(TextStateType state, bool condition) => condition ? new TextState(state) : none;
+        public static TextState Cond(TextStateType state, bool condition) => condition ? new TextState(state) : None;
         public static TextState InsufficientCond(bool cond) => Cond(TextStateType.Insufficient, cond);
     }
 }

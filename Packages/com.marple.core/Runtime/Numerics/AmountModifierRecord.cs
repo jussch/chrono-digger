@@ -38,20 +38,20 @@ namespace Marple.Core {
             }
         }
 
-        public string readableString => AsReadableStringBonus();
+        public string ReadableString => AsReadableStringBonus();
 
-        public Dictionary<AmountModifierKey, Entry> modifiers;
+        public Dictionary<AmountModifierKey, Entry> Modifiers;
 
-        private int observedId;
-        protected bool pauseDirty;
-        protected bool updateObservers;
+        private int _observedId;
+        protected bool PauseDirty;
+        protected bool UpdateObservers;
 
         public AmountModifierRecord() {
-            modifiers = new Dictionary<AmountModifierKey, Entry>();
+            Modifiers = new Dictionary<AmountModifierKey, Entry>();
         }
 
         public AmountModifierRecord(AmountModifierRecord modifierRecord) {
-            modifiers = new Dictionary<AmountModifierKey, Entry>(modifierRecord.modifiers);
+            Modifiers = new Dictionary<AmountModifierKey, Entry>(modifierRecord.Modifiers);
         }
 
         public AmountModifierRecord Clone() => new AmountModifierRecord(this);
@@ -69,26 +69,26 @@ namespace Marple.Core {
                 Remove(key);
                 return;
             }
-            modifiers[key] = entry;
+            Modifiers[key] = entry;
             MakeDirty();
         }
 
         /// <summary>Copies every entry from another record, keeping its keys.</summary>
         public void Add(AmountModifierRecord modifierRecord) {
-            foreach (var entry in modifierRecord.modifiers) {
+            foreach (var entry in modifierRecord.Modifiers) {
                 Add(entry.Key, entry.Value);
             }
         }
 
         public void Remove(object source, int index = 0) => Remove(new AmountModifierKey(source, index));
         public virtual void Remove(AmountModifierKey key) {
-            modifiers.Remove(key);
+            Modifiers.Remove(key);
             MakeDirty();
         }
 
         /// <summary>Removes every modifier whose key also exists in the other record.</summary>
         public void Remove(AmountModifierRecord modifierRecord) {
-            foreach (var key in modifierRecord.modifiers.Keys) {
+            foreach (var key in modifierRecord.Modifiers.Keys) {
                 Remove(key);
             }
         }
@@ -99,7 +99,7 @@ namespace Marple.Core {
         }
 
         public AmountModifierRecord Combine(ModifiableAmount modifiableAmount) {
-            Add(new AmountModifierKey(modifiableAmount), AmountModifier.Raw(modifiableAmount.baseValue).SetOrder(-2));
+            Add(new AmountModifierKey(modifiableAmount), AmountModifier.Raw(modifiableAmount.BaseValue).SetOrder(-2));
             Add(modifiableAmount);
             return this;
         }
@@ -110,7 +110,7 @@ namespace Marple.Core {
         }
 
         public bool Has(object source, int index = 0) => Has(new AmountModifierKey(source, index));
-        public bool Has(AmountModifierKey key) => modifiers.ContainsKey(key);
+        public bool Has(AmountModifierKey key) => Modifiers.ContainsKey(key);
 
         /// <summary>The value change if <paramref name="modifier"/> were added at <paramref name="key"/>.</summary>
         protected Amount GetDiff(Amount baseValue, AmountModifierKey key, AmountModifier modifier) {
@@ -132,43 +132,43 @@ namespace Marple.Core {
             return AmountModifier.AdjustWith(modifier, GetAllModifiers());
         }
 
-        public IEnumerable<AmountModifier> GetAllModifiers() => modifiers.Values.Select(entry => entry.Modifier);
+        public IEnumerable<AmountModifier> GetAllModifiers() => Modifiers.Values.Select(entry => entry.Modifier);
 
         public IEnumerable<AmountModifier> GetAllModifiersSorted() => AmountModifier.SortListType(GetAllModifiers());
 
         public void PauseDirtying(bool pauseDirtyN) {
-            pauseDirty = pauseDirtyN;
+            PauseDirty = pauseDirtyN;
         }
 
         protected virtual void MakeDirty() {
-            if (pauseDirty) return;
-            updateObservers = true;
+            if (PauseDirty) return;
+            UpdateObservers = true;
         }
 
-        public bool IsEmpty() => modifiers.Count == 0;
+        public bool IsEmpty() => Modifiers.Count == 0;
 
         public virtual void Clear() {
-            modifiers = new Dictionary<AmountModifierKey, Entry>();
+            Modifiers = new Dictionary<AmountModifierKey, Entry>();
             MakeDirty();
         }
 
         public void Load(AmountModifierRecord otherRecord) {
-            modifiers = otherRecord.modifiers ?? new Dictionary<AmountModifierKey, Entry>();
+            Modifiers = otherRecord.Modifiers ?? new Dictionary<AmountModifierKey, Entry>();
             MakeDirty();
         }
 
         public int GetObservableId() {
-            if (updateObservers) UpdateObservable();
-            return observedId;
+            if (UpdateObservers) UpdateObservable();
+            return _observedId;
         }
 
         protected void UpdateObservable() {
-            observedId += 1;
-            updateObservers = false;
+            _observedId += 1;
+            UpdateObservers = false;
         }
 
         public string Print() {
-            return string.Join(", ", modifiers.Select(entry => $"[{entry.Key}] {entry.Value}"));
+            return string.Join(", ", Modifiers.Select(entry => $"[{entry.Key}] {entry.Value}"));
         }
 
         public string AsReadableString(bool useSpace = false) {
@@ -177,7 +177,7 @@ namespace Marple.Core {
             List<AmountModifier> multMods = printList.FindAll(mod => mod.Type != AmountModifier.AmountModifierType.Raw);
             string rawModNum = Utils.BeautifyNumberSigned(AmountModifier.AdjustWith(0, rawMods), Utils.BeautifySettings.WithSpace(useSpace));
             string multModNum = Utils.BeautifyNumber(AmountModifier.AdjustWith(1, multMods), Utils.BeautifySettings.WithSpace(useSpace));
-            return "Mods: " + modifiers.Count + " at [" + rawModNum + ", x" + multModNum + "]";
+            return "Mods: " + Modifiers.Count + " at [" + rawModNum + ", x" + multModNum + "]";
         }
 
         public string AsReadableStringBonus(bool useSpace = false, double rawBonusBase = 0) {
@@ -196,7 +196,7 @@ namespace Marple.Core {
             return string.Join(", ", GetAllModifiers());
         }
 
-        public static AmountModifierRecord empty = new AmountModifierRecord();
+        public static AmountModifierRecord Empty = new AmountModifierRecord();
     }
 
     /// <summary>Starts an <see cref="AmountModifierRecord.Entry"/> chain from a modifier.</summary>

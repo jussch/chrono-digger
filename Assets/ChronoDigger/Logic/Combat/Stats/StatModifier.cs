@@ -8,9 +8,9 @@ namespace ChronoDigger.Combat {
     /// </summary>
     [Serializable]
     public struct StatModifier {
-        public StatDefinition stat;
-        public AmountModifier modifier;
+        public StatDefinition Stat;
+        public AmountModifier Modifier;
 
-        public ModifiableAmount Retrieve(StatBlock statBlock) => statBlock.GetAmount(stat);
+        public ModifiableAmount Retrieve(StatBlock statBlock) => statBlock.GetAmount(Stat);
     }
 }

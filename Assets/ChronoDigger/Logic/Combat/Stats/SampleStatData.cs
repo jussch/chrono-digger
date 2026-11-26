@@ -11,53 +11,53 @@ namespace ChronoDigger.Combat {
         public const double ManaPerWizardry = 5;
 
         public static readonly StatDefinition MaxHealth = new StatDefinition {
-            displayName = "Max Health", defaultValue = 100, category = StatCategory.Combat,
+            DisplayName = "Max Health", DefaultValue = 100, Category = StatCategory.Combat,
         };
         public static readonly StatDefinition HealthRegenTime = new StatDefinition {
-            displayName = "Health Regen Time", defaultValue = 10, category = StatCategory.Combat,
+            DisplayName = "Health Regen Time", DefaultValue = 10, Category = StatCategory.Combat,
         };
         public static readonly StatDefinition HealthRegen = new StatDefinition {
-            displayName = "Health Regen", defaultValue = 1, category = StatCategory.Combat,
+            DisplayName = "Health Regen", DefaultValue = 1, Category = StatCategory.Combat,
         };
 
         public static readonly StatDefinition MaxMana = new StatDefinition {
-            displayName = "Max Mana", defaultValue = 20, category = StatCategory.Combat,
+            DisplayName = "Max Mana", DefaultValue = 20, Category = StatCategory.Combat,
         };
         public static readonly StatDefinition ManaRegenTime = new StatDefinition {
-            displayName = "Mana Regen Time", defaultValue = 4, category = StatCategory.Combat,
+            DisplayName = "Mana Regen Time", DefaultValue = 4, Category = StatCategory.Combat,
         };
         public static readonly StatDefinition ManaRegen = new StatDefinition {
-            displayName = "Mana Regen", defaultValue = 2, category = StatCategory.Combat,
+            DisplayName = "Mana Regen", DefaultValue = 2, Category = StatCategory.Combat,
         };
 
         public static readonly StatDefinition Defence = new StatDefinition {
-            displayName = "Defence", defaultValue = 0, category = StatCategory.Combat,
+            DisplayName = "Defence", DefaultValue = 0, Category = StatCategory.Combat,
         };
 
         public static readonly StatDefinition Wizardry = new StatDefinition {
-            displayName = "Wizardry", defaultValue = 0, category = StatCategory.Class,
-            derivations = new List<StatModifier> {
-                new StatModifier { stat = MaxMana, modifier = AmountModifier.Raw(ManaPerWizardry) },
+            DisplayName = "Wizardry", DefaultValue = 0, Category = StatCategory.Class,
+            Derivations = new List<StatModifier> {
+                new StatModifier { Stat = MaxMana, Modifier = AmountModifier.Raw(ManaPerWizardry) },
             },
         };
 
         public static readonly StatDefinition Warrior = new StatDefinition {
-            displayName = "Warrior", defaultValue = 0, category = StatCategory.Class,
+            DisplayName = "Warrior", DefaultValue = 0, Category = StatCategory.Class,
         };
 
         public static readonly StatDefinition FireResistance = new StatDefinition {
-            displayName = "Fire Resistance", defaultValue = 0, category = StatCategory.Resistance,
+            DisplayName = "Fire Resistance", DefaultValue = 0, Category = StatCategory.Resistance,
         };
 
         public static readonly DamageType Fire = new DamageType {
-            displayName = "Fire", resistanceStat = FireResistance,
+            DisplayName = "Fire", ResistanceStat = FireResistance,
         };
 
         public static readonly StatProfile GoblinShaman = new StatProfile {
-            displayName = "Goblin Shaman",
-            overrides = new List<StatEntry> {
-                new StatEntry { stat = MaxHealth, baseValue = 30 },
-                new StatEntry { stat = Wizardry, baseValue = 3 },
+            DisplayName = "Goblin Shaman",
+            Overrides = new List<StatEntry> {
+                new StatEntry { Stat = MaxHealth, BaseValue = 30 },
+                new StatEntry { Stat = Wizardry, BaseValue = 3 },
             },
         };
     }
