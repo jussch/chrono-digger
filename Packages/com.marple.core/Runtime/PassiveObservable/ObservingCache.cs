@@ -9,8 +9,8 @@ namespace Marple.Core {
     /// Use <see cref="IsUpdated"/>: it returns true once per change and then re-caches.
     /// </summary>
     public class ObservingCache {
-        private List<int> _cacheIds;
-        private List<IPassiveObservable> _passiveObservables;
+        private readonly List<int> _cacheIds;
+        private readonly List<IPassiveObservable> _passiveObservables;
         private bool _forceUpdate;
         private bool _alwaysUpdate;
 
@@ -138,7 +138,7 @@ namespace Marple.Core {
          * Subclasses
          */
         public class Channel {
-            private Dictionary<string, ObservingCache> _dictionary;
+            private readonly Dictionary<string, ObservingCache> _dictionary;
 
             public Channel(PassiveObservable.IPassiveChannel channel) {
                 _dictionary = new Dictionary<string, ObservingCache>();

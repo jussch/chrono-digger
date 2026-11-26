@@ -33,6 +33,11 @@ namespace ChronoDigger.Combat {
         /**
          * Control
          **/
+
+        public int GetStateValue(ActorStateValues stateValue) => _state.GetValue(stateValue);
+        public void SetStateValue(ActorStateValues stateValue, int value) => _state.SetValue(stateValue, value);
+        public void ChangeStateValue(ActorStateValues stateValue, int value) => _state.ChangeValue(stateValue, value);
+
         public void GainHealth(int health) {
             if (health <= 0) return;
             _state.Health = Math.Min(_state.Health + health, Stats.Get(Stat.MaxHealth).ToInt());
