@@ -1,7 +1,7 @@
 using System;
-using ChronoDigger.Combat.Stats;
+using Marple.Core;
 
-namespace ChronoDigger.Combat.Actors {
+namespace ChronoDigger.Combat {
     public class Actor {
         public ActorState state;
         public StatBlock statBlock;
@@ -23,19 +23,61 @@ namespace ChronoDigger.Combat.Actors {
          * Control
          **/
         public void GainHealth(int health) {
+            if (health <= 0) return;
             state.health = Math.Min(state.health + health, statBlock.Get(Stat.MaxHealth).ToInt());
         }
 
         public void LoseHealth(int healthLoss) {
+            if (healthLoss <= 0) return;
             state.health = Math.Max(state.health - healthLoss, 0);
         }
 
         public void GainMana(int mana) {
+            if (mana <= 0) return;
             state.mana = Math.Min(state.mana + mana, statBlock.Get(Stat.MaxMana).ToInt());
         }
 
         public void LoseMana(int manaLoss) {
+            if (manaLoss <= 0) return;
             state.mana = Math.Max(state.mana - manaLoss, 0);
+        }
+
+        public void GainBlock(int block) {
+            if (block <= 0) return;
+            state.block += block;
+        }
+
+        public void LoseBlock(int blockLoss) {
+            if (blockLoss <= 0) return;
+            state.block = Math.Max(state.block - blockLoss, 0);
+        }
+
+        public void TakeDamage(DamageInfo damageInfo) {
+            Amount damage = ProcessIncomingDamage(damageInfo.value, damageInfo);
+            ApplyDamage(damage.ToInt(), damageInfo);
+        }
+
+        private Amount ProcessIncomingDamage(Amount damage, DamageInfo damageInfo) {
+            if (!damageInfo.HasFlags(DamageFlags.IgnoreResistances) && damageInfo.type != null) {
+                // Process resistance math
+            }
+
+            return damage;
+        }
+
+        // Takes final processed damage
+        private void ApplyDamage(int damage, DamageInfo damageInfo) {
+            if (state.block > 0 && !damageInfo.HasFlags(DamageFlags.IgnoreBlock)) {
+                if (state.block >= damage) {
+                    LoseBlock(damage);
+                    damage = 0;
+                } else {
+                    damage -= state.block;
+                    LoseBlock(state.block);
+                }
+            }
+
+            LoseHealth(damage);
         }
 
         /**

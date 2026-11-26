@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using ChronoDigger.Combat.Stats;
 
-namespace ChronoDigger.Combat.Actors {
+namespace ChronoDigger.Combat {
     public class StatusEffectDefinition /*: ScriptableObject */ {
         public int maxStacks = 0;
         public int baseTime = 10;

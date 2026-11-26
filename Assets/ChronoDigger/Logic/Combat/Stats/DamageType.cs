@@ -1,4 +1,4 @@
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     // [CreateAssetMenu(menuName = "Combat/Damage Type")]
     public class DamageType /* : ScriptableObject */ {
         public string displayName;

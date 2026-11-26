@@ -1,4 +1,4 @@
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     /// <summary>
     /// Registry of the few stats engine code names directly. Everything else is reached
     /// through data (DamageType.resistanceStat, spell fields, equipment).

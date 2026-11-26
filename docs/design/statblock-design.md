@@ -25,7 +25,7 @@ Runtime quantities such as current Health or current Mana are **out of scope**. 
    - whether `ModifiableAmount` raises a change event (if it doesn't, see "Change events" below)
    - `AmountModifier.MultiplyScalar(x)`, which **returns a new instance** and does not mutate the original
    - which numeric type they use (`double` or the `Amount` struct). Use the same type everywhere in this system.
-2. Find the existing namespace conventions and follow them. If none exist for combat, use `ChronoDigger.Combat.Stats`.
+2. Find the existing namespace conventions and follow them. If none exist for combat, use `ChronoDigger.Combat`.
 3. Odin attributes mentioned in this doc go in as comments for now (see Environment).
 
 ## Code style

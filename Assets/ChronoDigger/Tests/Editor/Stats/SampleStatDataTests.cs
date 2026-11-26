@@ -1,4 +1,4 @@
-using ChronoDigger.Combat.Stats;
+using ChronoDigger.Combat;
 using Marple.Core;
 using NUnit.Framework;
 

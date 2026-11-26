@@ -1,4 +1,4 @@
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     public static class Stat {
         private static CoreStats Core => CoreStats.Instance;
 

@@ -1,7 +1,6 @@
 using System;
-using ChronoDigger.Combat.Stats;
 
-namespace ChronoDigger.Combat.Actors {
+namespace ChronoDigger.Combat {
     [Serializable]
     public class StatusEffect {
         public int timeLeft;

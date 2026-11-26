@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Marple.Core;
 
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     /// <summary>
     /// Compared by reference, so there must be exactly one instance per stat.
     /// Construct only in <see cref="SampleStatData"/> (later: assets).

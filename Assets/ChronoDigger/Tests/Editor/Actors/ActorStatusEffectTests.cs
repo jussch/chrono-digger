@@ -1,5 +1,4 @@
-using ChronoDigger.Combat.Actors;
-using ChronoDigger.Combat.Stats;
+using ChronoDigger.Combat;
 using ChronoDigger.Tests.Stats;
 using Marple.Core;
 using NUnit.Framework;

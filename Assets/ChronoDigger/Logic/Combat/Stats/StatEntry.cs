@@ -1,6 +1,6 @@
 using System;
 
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     [Serializable]
     public class StatEntry {
         public StatDefinition stat;

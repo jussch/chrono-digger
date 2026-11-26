@@ -1,4 +1,4 @@
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     /// <summary>Grouping for UI and the inspector only. Logic must never branch on it.</summary>
     public enum StatCategory { Combat, Class, Resistance, Misc }
 }

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using ChronoDigger.Combat.Stats;
 using Marple.Core;
 
-namespace ChronoDigger.Combat.Actors {
+namespace ChronoDigger.Combat {
     [Serializable]
     public class ActorState {
         public int health;

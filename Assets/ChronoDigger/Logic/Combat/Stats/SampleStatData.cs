@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Marple.Core;
 
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     /// <summary>
     /// Stand-in for the assets that will exist once this runs in Unity. The only place that
     /// constructs stat definitions, damage types and profiles, so replacing it with assets

@@ -14,7 +14,7 @@ Run the tests after every change. Marple.Core can also be tested on its own from
 
 ## Layout
 
-- `Assets/ChronoDigger/Logic/`: game logic (`ChronoDigger.Logic` asmdef, `noEngineReferences: true`). Namespace root `ChronoDigger`, e.g. `ChronoDigger.Combat.Stats`.
+- `Assets/ChronoDigger/Logic/`: game logic (`ChronoDigger.Logic` asmdef, `noEngineReferences: true`). Namespace root `ChronoDigger`, e.g. `ChronoDigger.Combat`.
 - `Assets/ChronoDigger/Tests/Editor/`: NUnit tests (namespace `ChronoDigger.Tests.*`).
 - `Packages/com.marple.core/`: **Marple.Core**, a reusable library embedded as a **git subtree**. `Runtime/` holds `Amount`, `ModifiableAmount`, `AmountModifier`, `PassiveObservable`, `IDescribable`, and more.
 - `Dotnet/`, `Packages/com.marple.core/Dotnet~/`: `.csproj` files that glob the `.cs` files above (`EnableDefaultCompileItems=false`). Don't put source files here. New files under `Assets/` or `Runtime/` are picked up automatically.

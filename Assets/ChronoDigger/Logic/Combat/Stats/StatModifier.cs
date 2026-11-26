@@ -1,7 +1,7 @@
 using System;
 using Marple.Core;
 
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     /// <summary>
     /// "For each point of the owning stat, apply <see cref="modifier"/> to <see cref="stat"/>."
     /// Shared asset data: runtime code reads it and never changes it.

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     /// <summary>
     /// Authored template for an actor type ("what a goblin shaman is"). Stores only
     /// overrides; any stat not listed uses its <see cref="StatDefinition.defaultValue"/>.

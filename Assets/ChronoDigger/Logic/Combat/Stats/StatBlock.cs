@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Marple.Core;
 
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     /// <summary>
     /// A stat with no entry reads as its default; <see cref="GetAmount"/> creates the entry.
     /// Derived stats only update when <see cref="Calculate"/> is called.

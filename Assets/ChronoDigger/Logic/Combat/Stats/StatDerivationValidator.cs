@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ChronoDigger.Combat.Stats {
+namespace ChronoDigger.Combat {
     public static class StatDerivationValidator {
         /// <summary>
         /// Walks every derivation reachable from <paramref name="start"/>. Returns the first cycle

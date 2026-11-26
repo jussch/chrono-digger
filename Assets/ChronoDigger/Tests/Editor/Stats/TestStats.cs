@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using ChronoDigger.Combat.Actors;
-using ChronoDigger.Combat.Stats;
+using ChronoDigger.Combat;
 using Marple.Core;
 
 namespace ChronoDigger.Tests.Stats {
