@@ -7,6 +7,7 @@ namespace ChronoDigger.Combat {
         public ActionSlot Slot { get; }
         public TargetSelection Targets { get; }
         public int TimeRemaining { get; private set; }
+        
         public bool IsReady => TimeRemaining == 0;
 
         public Intent(Actor owner, ActionSlot slot, TargetSelection targets, int timeRemaining) {

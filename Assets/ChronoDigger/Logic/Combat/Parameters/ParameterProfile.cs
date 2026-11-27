@@ -6,6 +6,8 @@ namespace ChronoDigger.Combat {
     public class ParameterProfile {
         public List<Entry> Parameters = new List<Entry>();
 
+        public ParameterTable Tabulate(StatTable stats) => new ParameterTable(this, stats);
+
         [Serializable]
         public struct Entry {
             public ParameterDefinition Parameter;

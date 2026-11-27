@@ -7,6 +7,8 @@ namespace ChronoDigger.Combat {
         public int Windup;   // ticks before firing; 0 fires on the next tick
         public int Cooldown; // ticks after firing before usable again
 
+        public ParameterProfile ParameterProfile = new ParameterProfile();
+
         // [SerializeReference] on the next three in Unity, so subclasses can be picked in the inspector.
         public TargetingRule Targeting;
         public List<ActionCost> Costs = new List<ActionCost>();
