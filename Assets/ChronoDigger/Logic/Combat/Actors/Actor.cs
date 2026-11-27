@@ -4,7 +4,7 @@ using Marple.Core;
 
 namespace ChronoDigger.Combat {
     public class Actor {
-        public StatBlock Stats { get; private set; }
+        public StatTable Stats { get; private set; }
         public GridPos Position { get; set; }
         public ActionSet Actions { get; } = new ActionSet();
         /// <summary>Null when idle. Set and cleared only by <see cref="ActionRules"/>.</summary>
@@ -17,8 +17,8 @@ namespace ChronoDigger.Combat {
         public int Block => _state.Block;
         public IReadOnlyList<StatusEffect> StatusEffects => _state.StatusEffects;
 
-        public void LoadStatBlock(StatProfile profile) {
-            Stats = new StatBlock(profile);
+        public void LoadStatTable(StatProfile profile) {
+            Stats = new StatTable(profile);
         }
 
         public void Initiate() {
@@ -122,16 +122,16 @@ namespace ChronoDigger.Combat {
             if (existing != null) {
                 existing.AddStacks(statusEffect.Stacks);
                 existing.Reload();
-                existing.ApplyToStatBlock(Stats);
+                existing.ApplyToStatTable(Stats);
             } else {
                 _state.StatusEffects.Add(statusEffect);
-                statusEffect.ApplyToStatBlock(Stats);
+                statusEffect.ApplyToStatTable(Stats);
             }
         }
 
         public void RemoveStatusEffect(StatusEffect statusEffect) {
             _state.StatusEffects.Remove(statusEffect);
-            statusEffect.RemoveFromStatBlock(Stats);
+            statusEffect.RemoveFromStatTable(Stats);
         }
 
         public void IncrementStatusEffects(int time) {

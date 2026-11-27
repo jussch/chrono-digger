@@ -5,76 +5,76 @@ using NUnit.Framework;
 namespace ChronoDigger.Tests {
     public class StatusEffectTests {
         [Test]
-        public void ApplyToStatBlock_RawModifier_ChangesStat() {
+        public void ApplyToStatTable_RawModifier_ChangesStat() {
             var armor = TestStats.Create("Armor", 10);
-            var block = new StatBlock(TestStats.Profile());
+            var block = new StatTable(TestStats.Profile());
             var effect = new StatusEffect(TestStats.StatusEffect((armor, AmountModifier.Raw(5))));
 
-            effect.ApplyToStatBlock(block);
+            effect.ApplyToStatTable(block);
 
             Assert.AreEqual((Amount)15, block.Get(armor));
         }
 
         [Test]
-        public void ApplyToStatBlock_SeveralModifiers_ChangesEachStat() {
+        public void ApplyToStatTable_SeveralModifiers_ChangesEachStat() {
             var armor = TestStats.Create("Armor", 10);
             var speed = TestStats.Create("Speed", 4);
-            var block = new StatBlock(TestStats.Profile());
+            var block = new StatTable(TestStats.Profile());
             var effect = new StatusEffect(TestStats.StatusEffect(
                 (armor, AmountModifier.Raw(5)),
                 (speed, AmountModifier.Raw(-1))));
 
-            effect.ApplyToStatBlock(block);
+            effect.ApplyToStatTable(block);
 
             Assert.AreEqual((Amount)15, block.Get(armor));
             Assert.AreEqual((Amount)3, block.Get(speed));
         }
 
         [Test]
-        public void RemoveFromStatBlock_AfterApply_RestoresStat() {
+        public void RemoveFromStatTable_AfterApply_RestoresStat() {
             var armor = TestStats.Create("Armor", 10);
-            var block = new StatBlock(TestStats.Profile((armor, 20)));
+            var block = new StatTable(TestStats.Profile((armor, 20)));
             var effect = new StatusEffect(TestStats.StatusEffect((armor, AmountModifier.Raw(5))));
 
-            effect.ApplyToStatBlock(block);
-            effect.RemoveFromStatBlock(block);
+            effect.ApplyToStatTable(block);
+            effect.RemoveFromStatTable(block);
 
             Assert.AreEqual((Amount)20, block.Get(armor));
         }
 
         [Test]
-        public void ApplyToStatBlock_StacksMultiplyModifiers_ScalesByStacks() {
+        public void ApplyToStatTable_StacksMultiplyModifiers_ScalesByStacks() {
             var armor = TestStats.Create("Armor", 10);
-            var block = new StatBlock(TestStats.Profile());
+            var block = new StatTable(TestStats.Profile());
             var definition = TestStats.StatusEffect((armor, AmountModifier.Raw(5)));
             definition.StacksMultiplyModifiers = true;
             definition.MaxStacks = 5;
             var effect = new StatusEffect(definition);
             effect.AddStacks(3);
 
-            effect.ApplyToStatBlock(block);
+            effect.ApplyToStatTable(block);
 
             Assert.AreEqual((Amount)25, block.Get(armor));
         }
 
         [Test]
-        public void ApplyToStatBlock_StacksDoNotMultiplyModifiers_IgnoresStacks() {
+        public void ApplyToStatTable_StacksDoNotMultiplyModifiers_IgnoresStacks() {
             var armor = TestStats.Create("Armor", 10);
-            var block = new StatBlock(TestStats.Profile());
+            var block = new StatTable(TestStats.Profile());
             var definition = TestStats.StatusEffect((armor, AmountModifier.Raw(5)));
             definition.MaxStacks = 5;
             var effect = new StatusEffect(definition);
             effect.AddStacks(3);
 
-            effect.ApplyToStatBlock(block);
+            effect.ApplyToStatTable(block);
 
             Assert.AreEqual((Amount)15, block.Get(armor));
         }
 
         [Test]
-        public void ApplyToStatBlock_StackingModifier_LeavesDefinitionUnchanged() {
+        public void ApplyToStatTable_StackingModifier_LeavesDefinitionUnchanged() {
             var armor = TestStats.Create("Armor", 10);
-            var block = new StatBlock(TestStats.Profile());
+            var block = new StatTable(TestStats.Profile());
             var definition = TestStats.StatusEffect((armor, AmountModifier.Raw(5)));
             definition.StacksMultiplyModifiers = true;
             definition.MaxStacks = 5;
@@ -82,7 +82,7 @@ namespace ChronoDigger.Tests {
             var effect = new StatusEffect(definition);
             effect.AddStacks(3);
 
-            effect.ApplyToStatBlock(block);
+            effect.ApplyToStatTable(block);
 
             Assert.AreEqual(original, definition.StatModifiers[0].Modifier);
         }

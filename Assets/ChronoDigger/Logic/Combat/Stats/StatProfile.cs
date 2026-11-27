@@ -11,7 +11,7 @@ namespace ChronoDigger.Combat {
         public string DisplayName;
 
         // Odin: [TableList] for a compact grid, and
-        // [ValidateInput(...)] flagging null and duplicate stats (StatBlock throws on both).
+        // [ValidateInput(...)] flagging null and duplicate stats (StatTable throws on both).
         public List<StatEntry> Overrides = new List<StatEntry>();
 
         public override string ToString() => DisplayName;

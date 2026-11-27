@@ -11,6 +11,6 @@ namespace ChronoDigger.Combat {
         public StatDefinition Stat;
         public AmountModifier Modifier;
 
-        public ModifiableAmount Retrieve(StatBlock statBlock) => statBlock.GetAmount(Stat);
+        public ModifiableAmount Retrieve(StatTable statTable) => statTable.GetAmount(Stat);
     }
 }

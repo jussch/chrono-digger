@@ -31,20 +31,20 @@ namespace ChronoDigger.Combat {
             TimeLeft = Definition.BaseTime;
         }
 
-        public void ApplyToStatBlock(StatBlock statBlock) {
+        public void ApplyToStatTable(StatTable statTable) {
             foreach (var statMod in Definition.StatModifiers) {
                 // TODO: These will need descriptors later.
                 if (Definition.StacksMultiplyModifiers) {
-                    statMod.Retrieve(statBlock).Add(Definition, statMod.Modifier.MultiplyScalar(Stacks));
+                    statMod.Retrieve(statTable).Add(Definition, statMod.Modifier.MultiplyScalar(Stacks));
                 } else {
-                    statMod.Retrieve(statBlock).Add(Definition, statMod.Modifier);
+                    statMod.Retrieve(statTable).Add(Definition, statMod.Modifier);
                 }
             }
         }
 
-        public void RemoveFromStatBlock(StatBlock statBlock) {
+        public void RemoveFromStatTable(StatTable statTable) {
             foreach (var statMod in Definition.StatModifiers) {
-                statMod.Retrieve(statBlock).Remove(Definition);
+                statMod.Retrieve(statTable).Remove(Definition);
             }
         }
 

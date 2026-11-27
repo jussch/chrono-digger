@@ -15,7 +15,7 @@ namespace ChronoDigger.Tests {
 
         private static Actor CreateActor(StatProfile profile) {
             var actor = new Actor();
-            actor.LoadStatBlock(profile);
+            actor.LoadStatTable(profile);
             actor.Initiate();
             return actor;
         }

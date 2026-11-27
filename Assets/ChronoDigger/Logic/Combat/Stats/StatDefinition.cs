@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Marple.Core;
+using ChronoDigger.Utils;
 
 namespace ChronoDigger.Combat {
     /// <summary>
@@ -7,10 +8,7 @@ namespace ChronoDigger.Combat {
     /// Construct only in <see cref="SampleStatData"/> (later: assets).
     /// </summary>
     // [CreateAssetMenu(menuName = "Combat/Stat Definition")]
-    public class StatDefinition /* : ScriptableObject */ : IDescribable {
-        // [field: SerializeField] on these two in Unity: they're auto-properties because IDescribable needs properties.
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
+    public class StatDefinition : DescribableObject {
         public double DefaultValue;
         public StatCategory Category;
 

@@ -24,6 +24,16 @@ namespace ChronoDigger.Tests {
             return profile;
         }
 
+        public static ParameterDefinition Parameter(string name, double defaultValue = 0)
+            => new ParameterDefinition { DisplayName = name, DefaultValue = defaultValue };
+
+        public static ParameterProfile ParameterProfile(params (ParameterDefinition parameter, double value)[] entries) {
+            var profile = new ParameterProfile { Parameters = new List<ParameterProfile.Entry>() };
+            foreach (var (parameter, value) in entries)
+                profile.Parameters.Add(new ParameterProfile.Entry { Parameter = parameter, BaseValue = value });
+            return profile;
+        }
+
         public static StatusEffectDefinition StatusEffect(params (StatDefinition stat, AmountModifier modifier)[] modifiers) {
             var definition = new StatusEffectDefinition { StatModifiers = new List<StatModifier>() };
             foreach (var (stat, modifier) in modifiers)

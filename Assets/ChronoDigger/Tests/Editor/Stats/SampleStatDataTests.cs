@@ -9,7 +9,7 @@ namespace ChronoDigger.Tests {
 
         [Test]
         public void GoblinShaman_GetsManaFromWizardry() {
-            var block = new StatBlock(SampleStatData.GoblinShaman);
+            var block = new StatTable(SampleStatData.GoblinShaman);
             block.Calculate();
 
             Amount expected = SampleStatData.MaxMana.DefaultValue + 3 * SampleStatData.ManaPerWizardry;
