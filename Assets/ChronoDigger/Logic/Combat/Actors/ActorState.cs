@@ -22,10 +22,10 @@ namespace ChronoDigger.Combat {
         public List<StatusEffect> StatusEffects = new List<StatusEffect>();
 
         public ActorState(StatTable statTable) {
-            Health = statTable.Get(Stat.MaxHealth).ToInt();
-            Mana = statTable.Get(Stat.MaxMana).ToInt();
-            HealthRegenCycle = statTable.Get(Stat.HealthRegenTime).ToInt();
-            ManaRegenCycle = statTable.Get(Stat.ManaRegenTime).ToInt();
+            Health = statTable.GetValue(Stat.MaxHealth).ToInt();
+            Mana = statTable.GetValue(Stat.MaxMana).ToInt();
+            HealthRegenCycle = statTable.GetValue(Stat.HealthRegenTime).ToInt();
+            ManaRegenCycle = statTable.GetValue(Stat.ManaRegenTime).ToInt();
             // ...
         }
 

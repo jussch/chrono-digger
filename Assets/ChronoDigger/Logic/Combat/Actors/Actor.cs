@@ -40,7 +40,7 @@ namespace ChronoDigger.Combat {
 
         public void GainHealth(int health) {
             if (health <= 0) return;
-            _state.Health = Math.Min(_state.Health + health, Stats.Get(Stat.MaxHealth).ToInt());
+            _state.Health = Math.Min(_state.Health + health, Stats.GetValue(Stat.MaxHealth).ToInt());
         }
 
         public void LoseHealth(int health) {
@@ -50,7 +50,7 @@ namespace ChronoDigger.Combat {
 
         public void GainMana(int mana) {
             if (mana <= 0) return;
-            _state.Mana = Math.Min(_state.Mana + mana, Stats.Get(Stat.MaxMana).ToInt());
+            _state.Mana = Math.Min(_state.Mana + mana, Stats.GetValue(Stat.MaxMana).ToInt());
         }
 
         public void LoseMana(int mana) {
@@ -76,7 +76,7 @@ namespace ChronoDigger.Combat {
         private Amount ProcessIncomingDamage(Amount damage, DamageInfo damageInfo) {
             if (!damageInfo.HasFlags(DamageFlags.IgnoreResistances) && damageInfo.Type != null) {
                 // Process resistance math
-                damage = DamageMath.ApplyResistance(damage, Stats.Get(damageInfo.Type.ResistanceStat));
+                damage = DamageMath.ApplyResistance(damage, Stats.GetValue(damageInfo.Type.ResistanceStat));
             }
 
             return damage;
@@ -103,14 +103,14 @@ namespace ChronoDigger.Combat {
         public void IncrementActorState(int time) {
             _state.HealthRegenCycle -= time;
             if (_state.HealthRegenCycle <= 0) {
-                GainHealth(Stats.Get(Stat.HealthRegen).ToInt());
-                _state.HealthRegenCycle += Stats.Get(Stat.HealthRegenTime).ToInt();
+                GainHealth(Stats.GetValue(Stat.HealthRegen).ToInt());
+                _state.HealthRegenCycle += Stats.GetValue(Stat.HealthRegenTime).ToInt();
             }
 
             _state.ManaRegenCycle -= time;
             if (_state.ManaRegenCycle <= 0) {
-                GainMana(Stats.Get(Stat.ManaRegen).ToInt());
-                _state.ManaRegenCycle += Stats.Get(Stat.ManaRegenTime).ToInt();
+                GainMana(Stats.GetValue(Stat.ManaRegen).ToInt());
+                _state.ManaRegenCycle += Stats.GetValue(Stat.ManaRegenTime).ToInt();
             }
         }
 

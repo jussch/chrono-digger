@@ -18,25 +18,37 @@ namespace ChronoDigger.Combat {
         protected override double DefaultValue(StatDefinition stat) => stat.DefaultValue;
 
         /// <summary>
-        /// Applies every derivation of every stored stat to its target, replacing what the last
-        /// call applied. A single pass: chains settle when each source is processed before its
-        /// target, which holds for targets first created here.
+        /// Replaces every derivation with one computed from the stats' values without derivations.
+        /// Derivations go one level deep: in A → B → C, C sees B without A's contribution.
+        /// The result doesn't depend on order, and cycles are harmless.
         /// </summary>
         public void Calculate() {
+            RemoveDerivations();
+            var snapshot = SnapShot();
+
             var stats = new List<StatDefinition>(Definitions);
             for (int i = 0; i < stats.Count; i++) {
                 var source = stats[i];
                 if (source.Derivations == null) continue;
 
-                Amount sourceValue = Get(source);
+                Amount sourceValue = snapshot.GetValue(source);
                 for (int d = 0; d < source.Derivations.Count; d++) {
                     var derivation = source.Derivations[d];
                     if (!Contains(derivation.Stat)) stats.Add(derivation.Stat);
-
                     // MultiplyScalar returns a new modifier, so the shared modifier is never changed.
-                    // Keyed by source and index, so each call replaces the previous value.
-                    var scaled = derivation.Modifier.MultiplyScalar(sourceValue);
-                    GetAmount(derivation.Stat).Add(source, d, scaled.With(source));
+                    var scaled = derivation.GetFullModifier(sourceValue);
+                    Get(derivation.Stat).Add(source, d, scaled.With(source));
+                }
+            }
+        }
+
+        private void RemoveDerivations() {
+            foreach (var source in Definitions) {
+                if (source.Derivations == null) continue;
+
+                for (int d = 0; d < source.Derivations.Count; d++) {
+                    var target = source.Derivations[d].Stat;
+                    if (Contains(target)) Get(target).Remove(source, d);
                 }
             }
         }

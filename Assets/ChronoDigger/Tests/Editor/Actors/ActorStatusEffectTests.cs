@@ -32,7 +32,7 @@ namespace ChronoDigger.Tests {
 
             actor.AddStatusEffect(ArmorBuff(5));
 
-            Assert.AreEqual((Amount)15, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)15, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace ChronoDigger.Tests {
 
             actor.AddStatusEffect(ArmorBuff(5));
 
-            Assert.AreEqual((Amount)35, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)35, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace ChronoDigger.Tests {
             actor.AddStatusEffect(ArmorBuff(5));
             actor.AddStatusEffect(ArmorBuff(3));
 
-            Assert.AreEqual((Amount)18, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)18, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -70,8 +70,8 @@ namespace ChronoDigger.Tests {
 
             actor.AddStatusEffect(ArmorBuff(5));
 
-            Assert.AreEqual((Amount)4, actor.Stats.Get(_speed));
-            Assert.AreEqual(Stat.MaxHealth.DefaultValue, actor.Stats.Get(Stat.MaxHealth).ToDouble());
+            Assert.AreEqual((Amount)4, actor.Stats.GetValue(_speed));
+            Assert.AreEqual(Stat.MaxHealth.DefaultValue, actor.Stats.GetValue(Stat.MaxHealth).ToDouble());
         }
 
         [Test]
@@ -82,8 +82,8 @@ namespace ChronoDigger.Tests {
 
             target.AddStatusEffect(new StatusEffect(definition));
 
-            Assert.AreEqual((Amount)15, target.Stats.Get(_armor));
-            Assert.AreEqual((Amount)10, bystander.Stats.Get(_armor));
+            Assert.AreEqual((Amount)15, target.Stats.GetValue(_armor));
+            Assert.AreEqual((Amount)10, bystander.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace ChronoDigger.Tests {
 
             actor.RemoveStatusEffect(effect);
 
-            Assert.AreEqual((Amount)10, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)10, actor.Stats.GetValue(_armor));
             CollectionAssert.DoesNotContain(actor.StatusEffects, effect);
         }
 
@@ -107,7 +107,7 @@ namespace ChronoDigger.Tests {
 
             actor.RemoveStatusEffect(first);
 
-            Assert.AreEqual((Amount)13, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)13, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace ChronoDigger.Tests {
 
             actor.Increment(9);
 
-            Assert.AreEqual((Amount)15, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)15, actor.Stats.GetValue(_armor));
             CollectionAssert.Contains(actor.StatusEffects, effect);
         }
 
@@ -130,7 +130,7 @@ namespace ChronoDigger.Tests {
 
             actor.Increment(10);
 
-            Assert.AreEqual((Amount)10, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)10, actor.Stats.GetValue(_armor));
             CollectionAssert.DoesNotContain(actor.StatusEffects, effect);
         }
 
@@ -142,7 +142,7 @@ namespace ChronoDigger.Tests {
 
             actor.Increment(5);
 
-            Assert.AreEqual((Amount)13, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)13, actor.Stats.GetValue(_armor));
             Assert.AreEqual(1, actor.StatusEffects.Count);
         }
 
@@ -162,7 +162,7 @@ namespace ChronoDigger.Tests {
             actor.AddStatusEffect(new StatusEffect(definition));
 
             Assert.AreEqual(1, actor.StatusEffects.Count);
-            Assert.AreEqual((Amount)15, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)15, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -174,7 +174,7 @@ namespace ChronoDigger.Tests {
             actor.AddStatusEffect(new StatusEffect(definition, 1));
 
             Assert.AreEqual(3, actor.StatusEffects[0].Stacks);
-            Assert.AreEqual((Amount)25, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)25, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace ChronoDigger.Tests {
             actor.AddStatusEffect(new StatusEffect(definition, 2));
             actor.AddStatusEffect(new StatusEffect(definition, 2));
 
-            Assert.AreEqual((Amount)25, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)25, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace ChronoDigger.Tests {
             actor.AddStatusEffect(new StatusEffect(definition));
             actor.Increment(8);
 
-            Assert.AreEqual((Amount)15, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)15, actor.Stats.GetValue(_armor));
         }
 
         [Test]
@@ -211,7 +211,7 @@ namespace ChronoDigger.Tests {
 
             actor.RemoveStatusEffect(actor.StatusEffects[0]);
 
-            Assert.AreEqual((Amount)10, actor.Stats.Get(_armor));
+            Assert.AreEqual((Amount)10, actor.Stats.GetValue(_armor));
             Assert.AreEqual(0, actor.StatusEffects.Count);
         }
 
@@ -224,8 +224,8 @@ namespace ChronoDigger.Tests {
             first.AddStatusEffect(new StatusEffect(definition, 3));
             second.AddStatusEffect(new StatusEffect(definition, 1));
 
-            Assert.AreEqual((Amount)25, first.Stats.Get(_armor));
-            Assert.AreEqual((Amount)15, second.Stats.Get(_armor));
+            Assert.AreEqual((Amount)25, first.Stats.GetValue(_armor));
+            Assert.AreEqual((Amount)15, second.Stats.GetValue(_armor));
         }
     }
 }

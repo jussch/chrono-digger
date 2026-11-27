@@ -5,26 +5,35 @@ using Marple.Core;
 namespace ChronoDigger.Utils {
     /// <summary>
     /// Runtime amounts keyed by definition. A definition with no entry reads as its default;
-    /// <see cref="GetAmount"/> creates the entry.
+    /// <see cref="Get"/> creates the entry.
     /// </summary>
     public abstract class AmountTable<TDefinition> where TDefinition : class {
-        private readonly Dictionary<TDefinition, ModifiableAmount> _amounts = new Dictionary<TDefinition, ModifiableAmount>();
+        private Dictionary<TDefinition, ModifiableAmount> _amounts = new Dictionary<TDefinition, ModifiableAmount>();
 
         protected IEnumerable<TDefinition> Definitions => _amounts.Keys;
 
         protected abstract double DefaultValue(TDefinition definition);
 
-        public Amount Get(TDefinition definition) {
-            return _amounts.TryGetValue(definition, out var amount) ? amount.GetValue() : (Amount)DefaultValue(definition);
-        }
-
-        public ModifiableAmount GetAmount(TDefinition definition) {
+        public ModifiableAmount Get(TDefinition definition) {
             if (definition == null) throw new ArgumentNullException(nameof(definition));
             if (!_amounts.TryGetValue(definition, out var amount)) {
                 amount = new ModifiableAmount(DefaultValue(definition));
                 _amounts.Add(definition, amount);
             }
             return amount;
+        }
+
+        public Amount GetValue(TDefinition definition) {
+            return _amounts.TryGetValue(definition, out var amount) ? amount.GetValue() : (Amount)DefaultValue(definition);
+        }
+
+        public AmountTable<TDefinition> SnapShot() {
+            var copy = (AmountTable<TDefinition>)MemberwiseClone();
+            copy._amounts = new Dictionary<TDefinition, ModifiableAmount>();
+            foreach (var pair in _amounts) {
+                copy._amounts.Add(pair.Key, new ModifiableAmount(pair.Value.GetValue().ToDouble()));
+            }
+            return copy;
         }
 
         protected bool Contains(TDefinition definition) => _amounts.ContainsKey(definition);

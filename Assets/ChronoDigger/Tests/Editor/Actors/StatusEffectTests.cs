@@ -12,7 +12,7 @@ namespace ChronoDigger.Tests {
 
             effect.ApplyToStatTable(block);
 
-            Assert.AreEqual((Amount)15, block.Get(armor));
+            Assert.AreEqual((Amount)15, block.GetValue(armor));
         }
 
         [Test]
@@ -26,8 +26,8 @@ namespace ChronoDigger.Tests {
 
             effect.ApplyToStatTable(block);
 
-            Assert.AreEqual((Amount)15, block.Get(armor));
-            Assert.AreEqual((Amount)3, block.Get(speed));
+            Assert.AreEqual((Amount)15, block.GetValue(armor));
+            Assert.AreEqual((Amount)3, block.GetValue(speed));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace ChronoDigger.Tests {
             effect.ApplyToStatTable(block);
             effect.RemoveFromStatTable(block);
 
-            Assert.AreEqual((Amount)20, block.Get(armor));
+            Assert.AreEqual((Amount)20, block.GetValue(armor));
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace ChronoDigger.Tests {
 
             effect.ApplyToStatTable(block);
 
-            Assert.AreEqual((Amount)25, block.Get(armor));
+            Assert.AreEqual((Amount)25, block.GetValue(armor));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace ChronoDigger.Tests {
 
             effect.ApplyToStatTable(block);
 
-            Assert.AreEqual((Amount)15, block.Get(armor));
+            Assert.AreEqual((Amount)15, block.GetValue(armor));
         }
 
         [Test]

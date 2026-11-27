@@ -10,13 +10,7 @@ namespace ChronoDigger.Combat {
         public struct Entry {
             public ParameterDefinition Parameter;
             public double BaseValue;
-
-            public double RangeMin;
-            public double RangeMax;
-
-            // Todo: These probably want to include a variant of StatModifier
-            // That handles fractions effectively.
-            public List<StatModifier> statModifiers;
+            public List<StatModifier> StatModifiers;
         }
     }
 }

@@ -35,16 +35,16 @@ namespace ChronoDigger.Combat {
             foreach (var statMod in Definition.StatModifiers) {
                 // TODO: These will need descriptors later.
                 if (Definition.StacksMultiplyModifiers) {
-                    statMod.Retrieve(statTable).Add(Definition, statMod.Modifier.MultiplyScalar(Stacks));
+                    statMod.RetrieveStatFromTable(statTable).Add(Definition, statMod.Modifier.MultiplyScalar(Stacks));
                 } else {
-                    statMod.Retrieve(statTable).Add(Definition, statMod.Modifier);
+                    statMod.RetrieveStatFromTable(statTable).Add(Definition, statMod.Modifier);
                 }
             }
         }
 
         public void RemoveFromStatTable(StatTable statTable) {
             foreach (var statMod in Definition.StatModifiers) {
-                statMod.Retrieve(statTable).Remove(Definition);
+                statMod.RetrieveStatFromTable(statTable).Remove(Definition);
             }
         }
 

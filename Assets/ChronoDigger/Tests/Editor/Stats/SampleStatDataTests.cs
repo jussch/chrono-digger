@@ -13,7 +13,7 @@ namespace ChronoDigger.Tests {
             block.Calculate();
 
             Amount expected = SampleStatData.MaxMana.DefaultValue + 3 * SampleStatData.ManaPerWizardry;
-            Assert.AreEqual(expected, block.Get(Stat.MaxMana));
+            Assert.AreEqual(expected, block.GetValue(Stat.MaxMana));
         }
 
         [Test]
