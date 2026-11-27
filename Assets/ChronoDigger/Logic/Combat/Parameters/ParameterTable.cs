@@ -5,6 +5,10 @@ using Marple.Core;
 
 namespace ChronoDigger.Combat {
     public class ParameterTable : AmountTable<ParameterDefinition> {
+        public ParameterTable() {
+            
+        }
+
         /// <exception cref="ArgumentException">The profile lists a null parameter or the same parameter twice.</exception>
         public ParameterTable(ParameterProfile profile, StatTable statTable) {
             if (profile == null) throw new ArgumentNullException(nameof(profile));

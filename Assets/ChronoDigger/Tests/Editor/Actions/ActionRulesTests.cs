@@ -50,7 +50,7 @@ namespace ChronoDigger.Tests {
         [Test]
         public void TryDeclare_SlotOnCooldown_FailsOnCooldown() {
             var slot = SlotFor(Melee(cooldown: 2));
-            slot.StartCooldown();
+            slot.StartCooldown(new ParameterTable());
 
             var result = ActionRules.TryDeclare(_enemy, slot, new ActorSelection(_player), _state, out _);
 

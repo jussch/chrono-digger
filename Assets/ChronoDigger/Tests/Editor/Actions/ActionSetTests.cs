@@ -25,7 +25,7 @@ namespace ChronoDigger.Tests {
             var set = new ActionSet();
             set.Rebuild(new[] { source });
             var slot = set.Slots[0];
-            slot.StartCooldown();
+            slot.StartCooldown(new ParameterTable());
 
             set.Rebuild(new IActionSource[] { new FakeActionSource(TestStats.Action(new SelfTargeting())), source });
 
@@ -39,7 +39,7 @@ namespace ChronoDigger.Tests {
             var action = TestStats.Action(new SelfTargeting(), cooldown: 3);
             var set = new ActionSet();
             set.Rebuild(new[] { new FakeActionSource(action) });
-            set.Slots[0].StartCooldown();
+            set.Slots[0].StartCooldown(new ParameterTable());
 
             set.Rebuild(new[] { new FakeActionSource(action) });
 

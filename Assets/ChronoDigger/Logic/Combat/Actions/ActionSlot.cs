@@ -15,8 +15,9 @@ namespace ChronoDigger.Combat {
             Source = source;
         }
 
-        public void StartCooldown() {
-            CooldownRemaining = Definition.Cooldown;
+        public void StartCooldown(ActionContext context) => StartCooldown(context.Parameters);
+        public void StartCooldown(ParameterTable table) {
+            CooldownRemaining = Definition.Cooldown.GetValue(table).ToInt();
         }
 
         /// <summary>Clamps at 0.</summary>

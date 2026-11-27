@@ -9,7 +9,7 @@ namespace ChronoDigger.Combat {
     public class ParameterValue {
         public ParameterDefinition Parameter;
         public double Value;
-        public ParameterMode Mode;
+        public ParameterMode Mode = ParameterMode.Value;
 
         public enum ParameterMode {
             Parameter,
@@ -24,5 +24,11 @@ namespace ChronoDigger.Combat {
                 _ => throw new ArgumentOutOfRangeException(nameof(Mode), $"Mode {Mode} doesn't exist."),
             };
         }
+
+        /**
+         * Statics
+         **/
+        public static ParameterValue Raw(double rawValue) => new ParameterValue() { Mode = ParameterMode.Value, Value = rawValue };
+        public static implicit operator ParameterValue(double rawValue) => Raw(rawValue);
     }
 }

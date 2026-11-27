@@ -17,7 +17,6 @@ namespace ChronoDigger.Combat {
             }
 
             var context = new ActionContext(user, slot, state);
-            context.GenerateParameters();
             foreach (var cost in definition.Costs) {
                 if (!cost.CanPay(context)) return DeclareResult.CannotPay;
             }
@@ -25,7 +24,7 @@ namespace ChronoDigger.Combat {
                 cost.Pay(context);
             }
 
-            intent = new Intent(user, slot, targets, definition.Windup);
+            intent = new Intent(user, slot, targets, definition.Windup.GetValue(context).ToInt());
             user.CurrentIntent = intent;
             return DeclareResult.Success;
         }
@@ -39,7 +38,6 @@ namespace ChronoDigger.Combat {
             if (!intent.IsReady) throw new InvalidOperationException($"Intent has {intent.TimeRemaining} time remaining.");
 
             var context = new ActionContext(intent.Owner, intent.Slot, state);
-            context.GenerateParameters();
             var targets = intent.Targets.Resolve(state);
             foreach (var effect in intent.Slot.Definition.Effects) {
                 foreach (var target in targets) {
@@ -47,7 +45,7 @@ namespace ChronoDigger.Combat {
                 }
             }
 
-            intent.Slot.StartCooldown();
+            intent.Slot.StartCooldown(context);
             if (intent.Owner.CurrentIntent == intent) intent.Owner.CurrentIntent = null;
         }
     }

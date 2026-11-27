@@ -4,10 +4,11 @@ namespace ChronoDigger.Combat {
     // [CreateAssetMenu(menuName = "Combat/Action Definition")]
     public class ActionDefinition /* : ScriptableObject */ {
         public string DisplayName;
-        public int Windup;   // ticks before firing; 0 fires on the next tick
-        public int Cooldown; // ticks after firing before usable again
 
         public ParameterProfile ParameterProfile = new ParameterProfile();
+
+        public ParameterValue Windup = ParameterValue.Raw(2);   // ticks before firing; 0 fires on the next tick
+        public ParameterValue Cooldown = ParameterValue.Raw(0); // ticks after firing before usable again
 
         // [SerializeReference] on the next three in Unity, so subclasses can be picked in the inspector.
         public TargetingRule Targeting;

@@ -8,11 +8,13 @@ namespace ChronoDigger.Tests {
             return new ActionSlot(TestStats.Action(new SelfTargeting(), cooldown: cooldown), new FakeActionSource());
         }
 
+        private static ParameterTable Parameters() => new ParameterTable();
+
         [Test]
         public void StartCooldown_SetsToDefinitionCooldown() {
             var slot = Slot(cooldown: 2);
 
-            slot.StartCooldown();
+            slot.StartCooldown(Parameters());
 
             Assert.AreEqual(2, slot.CooldownRemaining);
             Assert.IsFalse(slot.IsReady);
@@ -21,7 +23,7 @@ namespace ChronoDigger.Tests {
         [Test]
         public void AdvanceCooldown_PastZero_ClampsAtZero() {
             var slot = Slot(cooldown: 2);
-            slot.StartCooldown();
+            slot.StartCooldown(Parameters());
 
             slot.AdvanceCooldown(5);
 

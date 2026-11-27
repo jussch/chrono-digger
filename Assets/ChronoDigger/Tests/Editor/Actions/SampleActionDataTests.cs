@@ -16,11 +16,11 @@ namespace ChronoDigger.Tests {
 
         [Test]
         public void SampleActions_MatchDesignValues() {
-            Assert.AreEqual(1, SampleActionData.SwingSword.Windup);
-            Assert.AreEqual(0, SampleActionData.SwingSword.Cooldown);
+            Assert.AreEqual(1, SampleActionData.SwingSword.Windup.GetValue(new ParameterTable()).ToInt());
+            Assert.AreEqual(0, SampleActionData.SwingSword.Cooldown.GetValue(new ParameterTable()).ToInt());
             Assert.AreEqual(1, ((SingleActorTargeting)SampleActionData.SwingSword.Targeting).Range);
-            Assert.AreEqual(3, SampleActionData.CastFireball.Windup);
-            Assert.AreEqual(2, SampleActionData.CastFireball.Cooldown);
+            Assert.AreEqual(3, SampleActionData.CastFireball.Windup.GetValue(new ParameterTable()).ToInt());
+            Assert.AreEqual(2, SampleActionData.CastFireball.Cooldown.GetValue(new ParameterTable()).ToInt());
             Assert.AreEqual(3, ((SingleActorTargeting)SampleActionData.CastFireball.Targeting).Range);
             Assert.IsInstanceOf<SelfTargeting>(SampleActionData.DrinkHealingPotion.Targeting);
             Assert.IsInstanceOf<ConsumeSourceCost>(SampleActionData.DrinkHealingPotion.Costs[0]);

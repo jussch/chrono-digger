@@ -134,7 +134,7 @@ namespace ChronoDigger.Combat {
             statusEffect.RemoveFromStatTable(Stats);
         }
 
-        public void IncrementStatusEffects(int time) {
+        private void IncrementStatusEffects(int time) {
             for (int i = _state.StatusEffects.Count - 1; i >= 0; i--) {
                 var statusEffect = _state.StatusEffects[i];
                 statusEffect.Increment(time);
