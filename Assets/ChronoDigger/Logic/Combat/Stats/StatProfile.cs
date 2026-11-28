@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace ChronoDigger.Combat {
@@ -6,14 +7,10 @@ namespace ChronoDigger.Combat {
     /// overrides; any stat not listed uses its <see cref="StatDefinition.DefaultValue"/>.
     /// A list rather than a dictionary because Unity can't serialize dictionaries.
     /// </summary>
-    // [CreateAssetMenu(menuName = "Combat/Stat Profile")]
-    public class StatProfile /* : ScriptableObject */ {
-        public string DisplayName;
-
+    [Serializable]
+    public class StatProfile {
         // Odin: [TableList] for a compact grid, and
         // [ValidateInput(...)] flagging null and duplicate stats (StatTable throws on both).
-        public List<StatEntry> Overrides = new List<StatEntry>();
-
-        public override string ToString() => DisplayName;
+        public List<StatEntry> Entries = new List<StatEntry>();
     }
 }

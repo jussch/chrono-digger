@@ -18,9 +18,9 @@ namespace ChronoDigger.Tests {
         }
 
         public static StatProfile Profile(params (StatDefinition stat, double value)[] overrides) {
-            var profile = new StatProfile { DisplayName = "Test Profile", Overrides = new List<StatEntry>() };
+            var profile = new StatProfile { Entries = new List<StatEntry>() };
             foreach (var (stat, value) in overrides)
-                profile.Overrides.Add(new StatEntry { Stat = stat, BaseValue = value });
+                profile.Entries.Add(new StatEntry { Stat = stat, BaseValue = value });
             return profile;
         }
 

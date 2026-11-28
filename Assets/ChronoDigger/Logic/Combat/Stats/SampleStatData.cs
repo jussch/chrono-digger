@@ -58,8 +58,7 @@ namespace ChronoDigger.Combat {
         };
 
         public static readonly StatProfile GoblinShaman = new StatProfile {
-            DisplayName = "Goblin Shaman",
-            Overrides = new List<StatEntry> {
+            Entries = new List<StatEntry> {
                 new StatEntry { Stat = MaxHealth, BaseValue = 30 },
                 new StatEntry { Stat = Wizardry, BaseValue = 3 },
             },

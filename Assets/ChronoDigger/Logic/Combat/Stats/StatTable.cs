@@ -14,7 +14,7 @@ namespace ChronoDigger.Combat {
         public StatTable(StatProfile profile) {
             if (profile == null) throw new ArgumentNullException(nameof(profile));
 
-            foreach (var entry in profile.Overrides ?? new List<StatEntry>()) {
+            foreach (var entry in profile.Entries ?? new List<StatEntry>()) {
                 AddEntry(entry.Stat, entry.BaseValue, profile);
             }
         }

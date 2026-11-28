@@ -4,8 +4,7 @@ using ChronoDigger.Utils;
 
 namespace ChronoDigger.Combat {
     [Serializable]
-    public class SpellSlot : IActionSource {
-        public SpellDefinition Definition;
+    public class SpellInstance : DefinitionInstance<SpellDefinition>, IActionSource {
         public SlotState SlotState;
 
         // IActionSource
