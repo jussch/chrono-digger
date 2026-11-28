@@ -6,6 +6,10 @@ using ChronoDigger.Utils;
 namespace ChronoDigger.Combat {
     /// <summary>Derived stats only update when <see cref="Calculate"/> is called.</summary>
     public class StatTable : AmountTable<StatDefinition> {
+        public StatTable() {
+
+        }
+
         /// <exception cref="ArgumentException">The profile lists a null stat or the same stat twice.</exception>
         public StatTable(StatProfile profile) {
             if (profile == null) throw new ArgumentNullException(nameof(profile));
@@ -24,7 +28,7 @@ namespace ChronoDigger.Combat {
         /// </summary>
         public void Calculate() {
             RemoveDerivations();
-            var snapshot = SnapShot();
+            var snapshot = Snapshot();
 
             var stats = new List<StatDefinition>(Definitions);
             for (int i = 0; i < stats.Count; i++) {

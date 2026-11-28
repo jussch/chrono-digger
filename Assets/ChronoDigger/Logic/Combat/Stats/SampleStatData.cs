@@ -49,6 +49,10 @@ namespace ChronoDigger.Combat {
             DisplayName = "Fire Resistance", DefaultValue = 0, Category = StatCategory.Resistance,
         };
 
+        public static readonly StatDefinition ActionLevel = new StatDefinition {
+            DisplayName = "ActionLevel", DefaultValue = 0, Category = StatCategory.Action,
+        };
+
         public static readonly DamageType Fire = new DamageType {
             DisplayName = "Fire", ResistanceStat = FireResistance,
         };

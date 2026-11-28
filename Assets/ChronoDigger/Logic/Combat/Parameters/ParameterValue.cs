@@ -25,6 +25,11 @@ namespace ChronoDigger.Combat {
             };
         }
 
+        public Amount GetPlainValue() {
+            if (Mode != ParameterMode.Value) return 0;
+            return Value;
+        }
+
         /**
          * Statics
          **/

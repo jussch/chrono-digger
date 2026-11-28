@@ -13,7 +13,7 @@ namespace ChronoDigger.Combat {
         }
 
         public void GenerateParameters() {
-            Parameters = Slot.Definition.ParameterProfile.Tabulate(User.Stats);
+            Parameters = Slot.Definition.ParameterProfile.Tabulate(StatTable.CombineSnapshot(User.Stats, Slot.SlotState.BuildStatTable()));
         }
     }
 }

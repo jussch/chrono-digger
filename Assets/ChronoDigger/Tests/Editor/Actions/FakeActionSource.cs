@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ChronoDigger.Combat;
+using ChronoDigger.Utils;
 
 namespace ChronoDigger.Tests {
     internal class FakeActionSource : IActionSource {
@@ -10,5 +11,6 @@ namespace ChronoDigger.Tests {
         }
 
         public IEnumerable<ActionDefinition> GrantedActions => _actions;
+        public SlotState GrantedActionState { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace ChronoDigger.Utils {
             return _amounts.TryGetValue(definition, out var amount) ? amount.GetValue() : (Amount)DefaultValue(definition);
         }
 
-        public AmountTable<TDefinition> SnapShot() {
+        public AmountTable<TDefinition> Snapshot() {
             var copy = (AmountTable<TDefinition>)MemberwiseClone();
             copy._amounts = new Dictionary<TDefinition, ModifiableAmount>();
             foreach (var pair in _amounts) {
@@ -35,6 +35,31 @@ namespace ChronoDigger.Utils {
             }
             return copy;
         }
+
+        /// <summary>
+        /// Copies every entry of <paramref name="other"/> into this table, modifiers included.
+        /// Where both tables have an entry, <paramref name="resolveConflict"/> decides what this table keeps;
+        /// see <see cref="AmountTableConflicts"/> for the common choices.
+        /// <paramref name="other"/> is never changed, and the two tables share no amounts afterwards.
+        /// </summary>
+        public void Merge(AmountTable<TDefinition> other, ConflictResolver resolveConflict) {
+            if (other == null) throw new ArgumentNullException(nameof(other));
+            if (resolveConflict == null) throw new ArgumentNullException(nameof(resolveConflict));
+
+            foreach (var pair in other._amounts) {
+                var incoming = Copy(pair.Value);
+                if (_amounts.TryGetValue(pair.Key, out var existing)) {
+                    _amounts[pair.Key] = resolveConflict(pair.Key, existing, incoming);
+                } else {
+                    _amounts.Add(pair.Key, incoming);
+                }
+            }
+        }
+
+        /// <param name="incoming">A copy, so it's safe to return or keep.</param>
+        /// <returns>The amount this table keeps for <paramref name="definition"/>.</returns>
+        public delegate ModifiableAmount ConflictResolver(TDefinition definition, ModifiableAmount existing,
+            ModifiableAmount incoming);
 
         protected bool Contains(TDefinition definition) => _amounts.ContainsKey(definition);
 
@@ -48,6 +73,25 @@ namespace ChronoDigger.Utils {
                 throw new ArgumentException($"Profile '{profile}' lists '{definition}' more than once.", nameof(profile));
             }
             _amounts.Add(definition, new ModifiableAmount(baseValue));
+        }
+
+        /**
+         * Statics
+         */
+        private static ModifiableAmount Copy(ModifiableAmount amount) {
+            var copy = new ModifiableAmount(amount.BaseValue);
+            copy.Add(amount);
+            return copy;
+        }
+
+        public static TCombine CombineSnapshot<TCombine>(TCombine table1, TCombine table2) where TCombine : AmountTable<TDefinition> {
+            if (table1 == null && table2 == null) return null;
+            if (table1 == null) return (TCombine)table2.Snapshot();
+            if (table2 == null) return (TCombine)table1.Snapshot();
+            
+            AmountTable<TDefinition> returnTable = table1.Snapshot();
+            returnTable.Merge(table2.Snapshot(), AmountTableConflicts.Sum);
+            return (TCombine)returnTable;
         }
     }
 }

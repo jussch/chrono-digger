@@ -1,4 +1,5 @@
 using System;
+using ChronoDigger.Utils;
 
 namespace ChronoDigger.Combat {
     /// <summary>Runtime state of one action granted to an actor by one source.</summary>
@@ -7,6 +8,7 @@ namespace ChronoDigger.Combat {
         public IActionSource Source { get; }
         public int CooldownRemaining { get; private set; }
         public bool IsReady => CooldownRemaining == 0;
+        public SlotState SlotState => Source.GrantedActionState;
 
         public ActionSlot(ActionDefinition definition, IActionSource source) {
             if (definition == null) throw new ArgumentNullException(nameof(definition));

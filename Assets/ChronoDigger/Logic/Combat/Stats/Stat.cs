@@ -11,5 +11,6 @@ namespace ChronoDigger.Combat {
         public static StatDefinition Defence   => Core.Defence;
         public static StatDefinition Wizardry  => Core.Wizardry;
         public static StatDefinition Warrior   => Core.Warrior;
+        public static StatDefinition ActionLevel   => Core.ActionLevel;
     }
 }

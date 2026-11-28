@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ChronoDigger.Combat;
+using ChronoDigger.Utils;
 
 namespace ChronoDigger.Tests {
     internal class FakeConsumableSource : IConsumableSource {
@@ -13,6 +14,7 @@ namespace ChronoDigger.Tests {
         }
 
         public IEnumerable<ActionDefinition> GrantedActions => _actions;
+        public SlotState GrantedActionState { get; set; }
         public bool CanConsume(int amount) => Count >= amount;
         public void Consume(int amount) => Count -= amount;
     }

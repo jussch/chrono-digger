@@ -7,7 +7,8 @@ namespace ChronoDigger.Combat {
     public class CoreStats /* : ScriptableObject */ {
         public StatDefinition MaxHealth, HealthRegenTime, HealthRegen, 
                             MaxMana, ManaRegenTime, ManaRegen, 
-                            Defence, Wizardry, Warrior;
+                            Defence, Wizardry, Warrior,
+                            ActionLevel;
 
         private static CoreStats _instance;
 
@@ -34,6 +35,7 @@ namespace ChronoDigger.Combat {
             Defence = SampleStatData.Defence,
             Wizardry = SampleStatData.Wizardry,
             Warrior = SampleStatData.Warrior,
+            ActionLevel = SampleStatData.ActionLevel,
         };
     }
 }
